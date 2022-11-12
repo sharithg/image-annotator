@@ -5,14 +5,12 @@ import { AnnotationState, AnyAnnotation } from "image-annotator/types";
 
 const bbCoordinates = [
   {
-    id: "1",
     x: 0,
     y: 0,
     width: 100,
     height: 100,
   },
   {
-    id: "2",
     x: 200,
     y: 200,
     width: 50,
@@ -22,7 +20,6 @@ const bbCoordinates = [
 
 const lineCoordinates = [
   {
-    id: "1",
     x1: 230,
     y1: 23,
     x2: 100,
