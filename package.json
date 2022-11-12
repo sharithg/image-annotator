@@ -8,8 +8,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",
-    "build:package": "yarn clean && tsc && cp package.json README.md ./dist/lib",
-    "publish": "npm publish --access public ./dist/lib/"
+    "build:package": "yarn clean && tsc && cp package.json README.md ./dist/lib"
   },
   "dependencies": {
     "image-annotator": "0.0.2",
