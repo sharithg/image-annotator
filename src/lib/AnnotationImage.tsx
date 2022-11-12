@@ -1,24 +1,14 @@
-import { Reducer, useEffect, useReducer, useRef, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import "./App.css";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { drawBox, getBoxCoordatesForUserDraw } from "./utils/box";
 import {
   Annotations,
+  AnnotationState,
   AnyAnnotation,
-  BoundingBoxCoordinate,
-  BoundingBoxCoordinateState,
-  DrawModes,
-  LineCoordinate,
-  LineCoordinateState,
   XYCoordinate,
 } from "./types";
 import { validateAnnotations } from "./utils/annotations";
-import { drawLine, getLineCoordatesForUserDraw } from "./utils/line";
-import { v4 as uuidv4 } from "uuid";
-import {
-  annotationImageReducer,
-  AnnotationState,
-} from "./annotationImageReducer";
+import { getLineCoordatesForUserDraw } from "./utils/line";
+import { annotationImageReducer } from "./annotationImageReducer";
 
 const drawImage = (
   context: CanvasRenderingContext2D,

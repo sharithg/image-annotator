@@ -1,4 +1,6 @@
 import {
+  AnnotationAction,
+  AnnotationState,
   AnyAnnotation,
   BoundingBoxCoordinate,
   BoundingBoxCoordinateState,
@@ -8,24 +10,6 @@ import {
 } from "./types";
 import { drawBox } from "./utils/box";
 import { drawLine } from "./utils/line";
-
-export type AnnotationState = {
-  boundingBoxes: BoundingBoxCoordinateState[];
-  lines: LineCoordinateState[];
-};
-
-export type AnnotationAction = {
-  type: string;
-  payload: {
-    coordinates: BoundingBoxCoordinate | LineCoordinate;
-    context: CanvasRenderingContext2D;
-    offsets: Offest;
-    onAnnotationChange?: (
-      annotations: AnnotationState,
-      newAnnotation: AnyAnnotation
-    ) => void;
-  };
-};
 
 export const annotationImageReducer = (
   state: AnnotationState,

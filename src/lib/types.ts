@@ -51,3 +51,21 @@ export type AnyAnnotation = {
   x2?: number;
   y2?: number;
 };
+
+export type AnnotationState = {
+  boundingBoxes: BoundingBoxCoordinateState[];
+  lines: LineCoordinateState[];
+};
+
+export type AnnotationAction = {
+  type: string;
+  payload: {
+    coordinates: BoundingBoxCoordinate | LineCoordinate;
+    context: CanvasRenderingContext2D;
+    offsets: Offest;
+    onAnnotationChange?: (
+      annotations: AnnotationState,
+      newAnnotation: AnyAnnotation
+    ) => void;
+  };
+};

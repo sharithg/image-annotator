@@ -1,14 +1,18 @@
 {
-  "name": "annotator",
-  "private": true,
-  "version": "0.0.0",
+  "name": "image-annotator",
+  "private": false,
+  "version": "0.0.2",
   "type": "module",
   "scripts": {
     "dev": "vite --port 3000",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "clean": "rm -rf dist",
+    "build:package": "yarn clean && tsc && cp package.json README.md ./dist/lib",
+    "publish": "npm publish --access public ./dist/lib/"
   },
   "dependencies": {
+    "image-annotator": "0.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "uuid": "^9.0.0"

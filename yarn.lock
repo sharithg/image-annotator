@@ -569,6 +569,25 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
+image-annotator@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/image-annotator/-/image-annotator-0.0.2.tgz#412696d0cf3a0e21245b7fe88ca5e9ba2e916b34"
+  integrity sha512-lpnpTfF+akYa3dTCantDWv+ODyc05h2bLZpXAq7eDvxAyOdf/x9qsr5M0jRtoVEXTIwo4ikjJNie9sJQfC9Tyw==
+  dependencies:
+    image-annotator "^0.0.1"
+    react "^18.2.0"
+    react-dom "^18.2.0"
+    uuid "^9.0.0"
+
+image-annotator@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/image-annotator/-/image-annotator-0.0.1.tgz#f0cfa08e283fc791ec60ac3534174ec3a338d55c"
+  integrity sha512-mR8/qExTOWLcUWPtVcjJZIKwcIMljnw1ldB+3uZYiEgFYb3vOlRyroo47Oi9no8Kmzei3ELOmu5kpD1f7lRfWA==
+  dependencies:
+    react "^18.2.0"
+    react-dom "^18.2.0"
+    uuid "^9.0.0"
+
 is-core-module@^2.9.0:
   version "2.11.0"
   resolved "https://registry.yarnpkg.com/is-core-module/-/is-core-module-2.11.0.tgz#ad4cb3e3863e814523c96f3f58d26cc570ff0144"

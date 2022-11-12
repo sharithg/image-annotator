@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
-import AnnotationImage from "./AnnotationImage";
-import { AnnotationState } from "./annotationImageReducer";
-import { AnyAnnotation } from "./types";
+import { AnnotationImage } from "image-annotator";
+import { AnnotationState, AnyAnnotation } from "image-annotator/types";
 
 const bbCoordinates = [
   {
