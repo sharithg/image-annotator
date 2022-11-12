@@ -61,6 +61,7 @@ function App() {
         </select>
       </div>
       <div>
+        <p>New Annotations</p>
         <ul>
           {newAnnotations.map((annotation) => (
             <li key={annotation.id}>{JSON.stringify(annotation)}</li>
