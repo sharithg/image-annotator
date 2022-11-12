@@ -1,0 +1,17 @@
+html * {
+  font-size: 1em !important;
+  color: #000 !important;
+  font-family: Arial !important;
+}
+
+.draw-type {
+  height: 20px;
+  width: 100px;
+  margin-left: 10px;
+}
+
+.control-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
