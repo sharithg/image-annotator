@@ -1,3 +1,3 @@
-import AnnotationImage from "./AnnotationImage";
+import CanvasImage from "./CanvasImage";
 
-export { AnnotationImage };
+export { CanvasImage };

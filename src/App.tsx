@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import "./App.css";
-import { AnnotationImage } from "./lib";
+import { CanvasImage } from "./lib";
 import { AnnotationsStateInternal, AnyAnnotation } from "./lib/types";
 import { v4 as uuidv4 } from "uuid";
-import CanvasImage from "./lib/CanvasImage";
 
 const bbCoordinates = [
   {
