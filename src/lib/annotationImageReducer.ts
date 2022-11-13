@@ -1,75 +1,86 @@
+import { AnnotationReducerConfig } from "./types/index";
 import {
   AnnotationAction,
   AnnotationState,
-  AnyAnnotation,
+  BBAnnotationStyles,
   BoundingBoxCoordinate,
-  BoundingBoxCoordinateState,
+  LineAnnotationStyles,
   LineCoordinate,
-  LineCoordinateState,
-  Offest,
 } from "./types";
 import { drawBox } from "./utils/box";
 import { drawLine } from "./utils/line";
 
-export const annotationImageReducer = (
-  state: AnnotationState,
-  action: AnnotationAction
-) => {
-  switch (action.type) {
-    case "ADD_BB_ANNOTATION":
-      drawBox(action.payload.context, action.payload.offsets, {
-        coordintate: action.payload.coordinates as BoundingBoxCoordinate,
-      });
-      const newAnnotationBox = {
-        ...(action.payload.coordinates as BoundingBoxCoordinate),
-        displayed: true,
-        id: state.boundingBoxes.length,
-      };
-      if (action.payload.onAnnotationChange) {
-        action.payload.onAnnotationChange(state, {
-          id: newAnnotationBox.id,
-          type: "box",
-          x: newAnnotationBox.x,
-          y: newAnnotationBox.y,
-          width: newAnnotationBox.width,
-          height: newAnnotationBox.height,
-        });
-      }
-      return {
-        ...state,
-        boundingBoxes: [...state.boundingBoxes, newAnnotationBox],
-      };
-    case "ADD_LINE_ANNOTATION":
-      drawLine(action.payload.context, action.payload.offsets, {
-        coordintate: action.payload.coordinates as LineCoordinate,
-      });
-      const newAnnotationLine = {
-        ...(action.payload.coordinates as LineCoordinate),
-        displayed: true,
-        id: state.lines.length,
-      };
-      if (action.payload.onAnnotationChange) {
-        action.payload.onAnnotationChange(state, {
-          id: newAnnotationLine.id,
-          type: "line",
-          x1: newAnnotationLine.x1,
-          y1: newAnnotationLine.y1,
-          x2: newAnnotationLine.x2,
-          y2: newAnnotationLine.y2,
-        });
-      }
-      return {
-        ...state,
-        lines: [
-          ...state.lines,
-          {
-            ...(action.payload.coordinates as LineCoordinate),
-            displayed: true,
-            id: state.lines.length,
-          },
-        ],
-      };
-    default:
-      return state;
-  }
+const checkIfAnnotationIsDisplayed = (
+  id: string,
+  state: AnnotationState
+): boolean => {
+  const { currentAnnotationIds } = state;
+  return currentAnnotationIds.has(id);
 };
+
+export const annotationImageReducer =
+  (config: AnnotationReducerConfig) =>
+  (state: AnnotationState, action: AnnotationAction): AnnotationState => {
+    switch (action.type) {
+      case "ADD_BB_ANNOTATION":
+        const isBBDisplayed = checkIfAnnotationIsDisplayed(
+          action.payload.id,
+          state
+        );
+        if (isBBDisplayed) {
+          return state;
+        }
+        drawBox({
+          context: action.payload.context,
+          offset: action.payload.offsets,
+          coordintate: action.payload.coordinates as BoundingBoxCoordinate,
+          styles:
+            (action.payload.styles as BBAnnotationStyles) ??
+            config.defaultBoundingBoxStyles,
+        });
+        const newAnnotationBox = {
+          ...(action.payload.coordinates as BoundingBoxCoordinate),
+          displayed: true,
+          id: action.payload.id,
+        };
+
+        return {
+          ...state,
+          boundingBoxes: [...state.boundingBoxes, newAnnotationBox],
+          currentAnnotationIds: state.currentAnnotationIds.add(
+            action.payload.id
+          ),
+        };
+      case "ADD_LINE_ANNOTATION":
+        const isLineDisplayed = checkIfAnnotationIsDisplayed(
+          action.payload.id,
+          state
+        );
+        if (isLineDisplayed) {
+          return state;
+        }
+        drawLine({
+          context: action.payload.context,
+          offset: action.payload.offsets,
+          coordintate: action.payload.coordinates as LineCoordinate,
+          styles:
+            (action.payload.styles as LineAnnotationStyles) ??
+            config.defaultLineStyles,
+        });
+        const newAnnotationLine = {
+          ...(action.payload.coordinates as LineCoordinate),
+          displayed: true,
+          id: action.payload.id,
+        };
+
+        return {
+          ...state,
+          lines: [...state.lines, newAnnotationLine],
+          currentAnnotationIds: state.currentAnnotationIds.add(
+            action.payload.id
+          ),
+        };
+      default:
+        return state;
+    }
+  };

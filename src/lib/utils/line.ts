@@ -1,24 +1,50 @@
 import { MOUSE_POINT_OFFSET } from "../constants";
 import {
-  BoundingBoxCoordinate,
   ClientCoordinate,
+  LineAnnotationStyles,
   LineCoordinate,
   Offest,
   XYCoordinate,
 } from "../types";
 
-export const drawLine = (
-  context: CanvasRenderingContext2D,
-  { dx, dy }: Offest,
-  input: {
-    coordintate: LineCoordinate;
-  }
-) => {
+export const drawLine = (input: {
+  context: CanvasRenderingContext2D;
+  offset: Offest;
+  coordintate: LineCoordinate;
+  styles: LineAnnotationStyles;
+}) => {
+  const { context, offset, coordintate, styles } = input;
+  // line
   context.beginPath();
-  context.strokeStyle = "yellow";
-  context.moveTo(input.coordintate.x1 + dx, input.coordintate.y1 + dy);
-  context.lineTo(input.coordintate.x2 + dx, input.coordintate.y2 + dy);
+  context.strokeStyle = styles.strokeColor;
+  context.lineWidth = styles.strokeWidth;
+  context.setLineDash([5, 3]);
+  context.moveTo(coordintate.x1 + offset.dx, coordintate.y1 + offset.dy);
+  context.lineTo(coordintate.x2 + offset.dx, coordintate.y2 + offset.dy);
   context.stroke();
+
+  // handles
+  context.setLineDash([]);
+  if (styles.showHandles) {
+    context.beginPath();
+    context.arc(
+      coordintate.x1 + offset.dx,
+      coordintate.y1 + offset.dy,
+      5,
+      0,
+      2 * Math.PI
+    );
+    context.stroke();
+    context.beginPath();
+    context.arc(
+      coordintate.x2 + offset.dx,
+      coordintate.y2 + offset.dy,
+      5,
+      0,
+      2 * Math.PI
+    );
+    context.stroke();
+  }
 };
 
 export const getLineCoordatesForUserDraw = (

@@ -1,44 +1,17 @@
-import { useEffect, useReducer, useRef, useState } from "react";
-import { drawBox, getBoxCoordatesForUserDraw } from "./utils/box";
-import {
-  Annotations,
-  AnnotationState,
-  AnyAnnotation,
-  XYCoordinate,
-} from "./types";
+import { useEffect, useRef, useState } from "react";
+import { getBoxCoordatesForUserDraw } from "./utils/box";
+import { AnyAnnotation, XYCoordinate } from "./types";
 import { validateAnnotations } from "./utils/annotations";
 import { getLineCoordatesForUserDraw } from "./utils/line";
-import { annotationImageReducer } from "./annotationImageReducer";
-
-const drawImage = (
-  context: CanvasRenderingContext2D,
-  canvas: HTMLCanvasElement,
-  imageSrc: string,
-  onImageLoad: (dx: number, dy: number) => void
-) => {
-  const img = new Image();
-  img.onload = function () {
-    var hRatio = canvas.width / img.width;
-    var vRatio = canvas.height / img.height;
-    var ratio = Math.min(hRatio, vRatio);
-
-    const dx = (canvas.width - img.width * ratio) / 2;
-    const dy = (canvas.height - img.height * ratio) / 2;
-
-    context.drawImage(img, dx, dy, img.width * ratio, img.height * ratio); // draw the image offset by half
-    onImageLoad(dx, dy);
-  };
-  img.src = imageSrc;
-};
+import { AnnotationsProps } from "./types/props";
+import { useAnnotations } from "./AnnotationImageContext";
+import { drawImage } from "./utils/image";
 
 interface Props {
-  annotations: Annotations;
+  annotations: AnnotationsProps;
   imageSrc: string;
   drawMode?: string;
-  onAnnotationChange?: (
-    annotations: AnnotationState,
-    newAnnotation: AnyAnnotation
-  ) => void;
+  onAnnotationDraw?: (newAnnotation: AnyAnnotation) => void;
   height?: number;
   width?: number;
 }
@@ -47,7 +20,7 @@ const AnnotationImage: React.FC<Props> = ({
   annotations,
   imageSrc,
   drawMode,
-  onAnnotationChange,
+  onAnnotationDraw,
   width,
   height,
 }) => {
@@ -65,14 +38,12 @@ const AnnotationImage: React.FC<Props> = ({
   const [currentDrawingMousePosition, setCurrentDrawingMousePosition] =
     useState<XYCoordinate | null>(null);
 
+  const { dispatchAnnotation, imageFetchHeaders, activeAnnotations } =
+    useAnnotations();
+
   const context = canvasRef.current?.getContext(
     "2d"
   ) as CanvasRenderingContext2D;
-
-  const [, dispatchAnnotation] = useReducer(annotationImageReducer, {
-    boundingBoxes: [],
-    lines: [],
-  });
 
   const offsets = {
     dx: xOffset,
@@ -88,41 +59,52 @@ const AnnotationImage: React.FC<Props> = ({
     context.fillStyle = "#000000";
     context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 
-    drawImage(context, canvas as HTMLCanvasElement, imageSrc, (dx, dy) => {
-      setImageLoaded(true);
-      setXOffset(dx);
-      setYOffset(dy);
-    });
-  }, []);
+    drawImage(
+      context,
+      canvas as HTMLCanvasElement,
+      imageSrc,
+      imageFetchHeaders ?? null,
+      (dx, dy) => {
+        setImageLoaded(true);
+        setXOffset(dx);
+        setYOffset(dy);
+      }
+    );
+  }, [imageLoaded]);
 
   useEffect(() => {
     if (imageLoaded) {
-      validateAnnotations(annotations);
       annotations.boundingBoxes.forEach((box) => {
-        drawBox(context, offsets, {
-          coordintate: box,
-        });
         dispatchAnnotation({
           type: "ADD_BB_ANNOTATION",
           payload: {
             coordinates: box,
             context,
             offsets,
-          },
-        });
-      });
-      annotations.lines.forEach((line) => {
-        dispatchAnnotation({
-          type: "ADD_BB_ANNOTATION",
-          payload: {
-            coordinates: line,
-            context,
-            offsets,
+            styles: box.styles ?? null,
+            id: box.id,
           },
         });
       });
     }
-  }, [imageLoaded]);
+  }, [imageLoaded, annotations]);
+
+  useEffect(() => {
+    if (imageLoaded) {
+      annotations.lines.forEach((line) => {
+        dispatchAnnotation({
+          type: "ADD_LINE_ANNOTATION",
+          payload: {
+            coordinates: line,
+            context,
+            offsets,
+            styles: line.styles ?? null,
+            id: line.id,
+          },
+        });
+      });
+    }
+  }, [imageLoaded, annotations]);
 
   const handleDrawLine = (
     e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
@@ -133,15 +115,11 @@ const AnnotationImage: React.FC<Props> = ({
         e,
         offsets
       );
-      dispatchAnnotation({
-        type: "ADD_LINE_ANNOTATION",
-        payload: {
-          coordinates: coordintates,
-          context,
-          offsets,
-          onAnnotationChange,
-        },
-      });
+      if (onAnnotationDraw) {
+        onAnnotationDraw({
+          lineCoordinate: coordintates,
+        });
+      }
     }
   };
 
@@ -154,15 +132,11 @@ const AnnotationImage: React.FC<Props> = ({
         e,
         offsets
       );
-      dispatchAnnotation({
-        type: "ADD_BB_ANNOTATION",
-        payload: {
-          coordinates: cordinates,
-          context,
-          offsets,
-          onAnnotationChange,
-        },
-      });
+      if (onAnnotationDraw) {
+        onAnnotationDraw({
+          boundingBoxCoordinate: cordinates,
+        });
+      }
     }
   };
 

@@ -25,11 +25,6 @@ export type LineCoordinateState = {
   id: string | number;
 } & LineCoordinate;
 
-export type Annotations = {
-  boundingBoxes: BoundingBoxCoordinate[];
-  lines: LineCoordinate[];
-};
-
 export type AnnotationsState = {
   boundingBoxes: BoundingBoxCoordinateState[];
   lines: LineCoordinateState[];
@@ -40,21 +35,14 @@ export type DrawModes = "box" | "line";
 export type Offest = { dx: number; dy: number };
 
 export type AnyAnnotation = {
-  id: string | number;
-  type: "box" | "line";
-  x?: number;
-  y?: number;
-  width?: number;
-  height?: number;
-  x1?: number;
-  y1?: number;
-  x2?: number;
-  y2?: number;
+  lineCoordinate?: LineCoordinate;
+  boundingBoxCoordinate?: BoundingBoxCoordinate;
 };
 
 export type AnnotationState = {
   boundingBoxes: BoundingBoxCoordinateState[];
   lines: LineCoordinateState[];
+  currentAnnotationIds: Set<string>;
 };
 
 export type AnnotationAction = {
@@ -63,9 +51,24 @@ export type AnnotationAction = {
     coordinates: BoundingBoxCoordinate | LineCoordinate;
     context: CanvasRenderingContext2D;
     offsets: Offest;
-    onAnnotationChange?: (
-      annotations: AnnotationState,
-      newAnnotation: AnyAnnotation
-    ) => void;
+    styles: LineAnnotationStyles | BBAnnotationStyles | null;
+    id: string;
   };
+};
+
+export type ImageSrc = {
+  url: string;
+  headers?: { [key: string]: string };
+};
+
+export type LineAnnotationStyles = {
+  strokeColor: string;
+  strokeWidth: number;
+  strokeDashArray: number[];
+  showHandles: boolean;
+};
+
+export type BBAnnotationStyles = {
+  strokeColor: string;
+  strokeWidth: number;
 };

@@ -1,25 +1,27 @@
 import { MOUSE_POINT_OFFSET } from "../constants";
 import {
+  BBAnnotationStyles,
   BoundingBoxCoordinate,
   ClientCoordinate,
   Offest,
   XYCoordinate,
 } from "../types";
 
-export const drawBox = (
-  context: CanvasRenderingContext2D,
-  { dx, dy }: Offest,
-  input: {
-    coordintate: BoundingBoxCoordinate;
-  }
-) => {
+export const drawBox = (input: {
+  coordintate: BoundingBoxCoordinate;
+  styles: BBAnnotationStyles;
+  context: CanvasRenderingContext2D;
+  offset: Offest;
+}) => {
+  const { coordintate, styles, context, offset } = input;
   context.beginPath();
-  context.strokeStyle = "red";
+  context.strokeStyle = styles.strokeColor;
+  context.lineWidth = styles.strokeWidth;
   context.rect(
-    input.coordintate.x + dx,
-    input.coordintate.y + dy,
-    input.coordintate.width,
-    input.coordintate.height
+    coordintate.x + offset.dx,
+    coordintate.y + offset.dy,
+    coordintate.width,
+    coordintate.height
   );
   context.stroke();
 };
