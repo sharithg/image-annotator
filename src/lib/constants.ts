@@ -1,1 +1,1 @@
-export const MOUSE_POINT_OFFSET = 7;
+export const MOUSE_POINT_OFFSET = 0;

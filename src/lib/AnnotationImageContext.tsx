@@ -1,8 +1,8 @@
 import React, { useContext, createContext, useReducer } from "react";
-import { annotationImageReducer } from "./annotationImageReducer";
+import { annotationImageReducer } from "./annotationReducer";
+import { AnnotationAction } from "./annotationReducer/types";
 import {
-  AnnotationAction,
-  AnnotationState,
+  AnnotationsStateInternal,
   BBAnnotationStyles,
   LineAnnotationStyles,
 } from "./types";
@@ -17,7 +17,9 @@ type Props = {
 interface Context {
   dispatchAnnotation: React.Dispatch<AnnotationAction>;
   imageFetchHeaders: HeadersInit | null;
-  activeAnnotations: AnnotationState;
+  defaultBoundingBoxStyles: BBAnnotationStyles;
+  defaultLineStyles: LineAnnotationStyles;
+  userAnnotationState: AnnotationsStateInternal;
 }
 
 const AnnotationsContext = createContext({} as Context);
@@ -28,22 +30,20 @@ export const AnnotationsProvider = ({
   defaultLineStyles,
   imageFetchHeaders,
 }: Props) => {
-  const [activeAnnotations, dispatchAnnotation] = useReducer(
-    annotationImageReducer({
-      defaultBoundingBoxStyles,
-      defaultLineStyles,
-    }),
+  const [userAnnotationState, dispatchAnnotation] = useReducer(
+    annotationImageReducer,
     {
       boundingBoxes: [],
       lines: [],
-      currentAnnotationIds: new Set<string>(),
     }
   );
 
   const value: Context = {
     dispatchAnnotation,
     imageFetchHeaders: imageFetchHeaders ?? null,
-    activeAnnotations,
+    defaultBoundingBoxStyles,
+    defaultLineStyles,
+    userAnnotationState,
   };
 
   return (

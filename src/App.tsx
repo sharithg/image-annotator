@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import "./App.css";
 import { AnnotationImage } from "./lib";
-import { AnyAnnotation } from "./lib/types";
+import { AnnotationsStateInternal, AnyAnnotation } from "./lib/types";
 import { v4 as uuidv4 } from "uuid";
+import CanvasImage from "./lib/CanvasImage";
 
 const bbCoordinates = [
   {
@@ -11,6 +12,10 @@ const bbCoordinates = [
     y: 0,
     width: 100,
     height: 100,
+    styles: {
+      strokeColor: "red",
+      strokeWidth: 10,
+    },
   },
   {
     id: uuidv4(),
@@ -41,13 +46,20 @@ function App() {
     useState(bbCoordinates);
   const [lineAnnotations, setLineAnnotations] = useState(lineCoordinates);
 
-  const handleAnnotationDraw = (newAnnotation: AnyAnnotation) => {
+  const handleAnnotationDraw = (
+    currentAnnotationState: AnnotationsStateInternal,
+    newAnnotation: AnyAnnotation
+  ) => {
     if (newAnnotation.boundingBoxCoordinate) {
       setBoundingBoxAnnotations([
         ...boundingBoxAnnotations,
         {
           ...newAnnotation.boundingBoxCoordinate,
           id: uuidv4(),
+          styles: {
+            strokeColor: "red",
+            strokeWidth: 10,
+          },
         },
       ]);
     }
@@ -62,27 +74,37 @@ function App() {
     }
   };
 
+  const handleAnnotationUpdate = (
+    currentAnnotationState: AnnotationsStateInternal,
+    updatedAnnotation: AnyAnnotation
+  ) => {
+    console.log("updatedAnnotation", updatedAnnotation, currentAnnotationState);
+  };
+
   return (
     <div>
-      <AnnotationImage
+      <CanvasImage
         annotations={{
-          boundingBoxes: boundingBoxAnnotations,
-          lines: lineAnnotations,
+          boundingBoxes: [bbCoordinates[0]],
+          lines: [lineCoordinates[0]],
         }}
         drawMode={drawType}
         imageSrc="https://medlineplus.gov/images/Xray_share.jpg"
         onAnnotationDraw={handleAnnotationDraw}
+        onAnnotationUpdate={handleAnnotationUpdate}
       />
       <div className="control-container">
-        <h3>Select Annotation Type</h3>
-        <select
-          className="draw-type"
-          value={drawType}
-          onChange={(e) => setDrawType(e.target.value)}
-        >
-          <option value="box">Box</option>
-          <option value="line">Line</option>
-        </select>
+        <div>
+          <h3>Select Annotation Type</h3>
+          <select
+            className="draw-type"
+            value={drawType}
+            onChange={(e) => setDrawType(e.target.value)}
+          >
+            <option value="box">Box</option>
+            <option value="line">Line</option>
+          </select>
+        </div>
       </div>
       <div>
         <p>New Annotations</p>

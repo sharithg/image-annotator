@@ -1,4 +1,3 @@
-import { MOUSE_POINT_OFFSET } from "../constants";
 import {
   BBAnnotationStyles,
   BoundingBoxCoordinate,
@@ -27,14 +26,25 @@ export const drawBox = (input: {
 };
 
 export const getBoxCoordatesForUserDraw = (
-  mousePos: XYCoordinate,
-  client: ClientCoordinate,
-  offset: Offest
+  startCoordinates: XYCoordinate,
+  endCoordinates: XYCoordinate
 ) => {
-  const x = mousePos.x - offset.dx - MOUSE_POINT_OFFSET;
-  const y = mousePos.y - offset.dy - MOUSE_POINT_OFFSET;
-  const width = client.clientX - mousePos.x;
-  const height = client.clientY - mousePos.y;
+  const x = startCoordinates.x;
+  const y = startCoordinates.y;
+  const width = endCoordinates.x - x;
+  const height = endCoordinates.y - y;
+
+  return { x, y, width, height };
+};
+
+export const getBoxCoordatesForUserUpdate = (
+  startCoordinates: XYCoordinate,
+  size: { width: number; height: number }
+) => {
+  const x = startCoordinates.x;
+  const y = startCoordinates.y;
+  const width = size.width;
+  const height = size.height;
 
   return { x, y, width, height };
 };

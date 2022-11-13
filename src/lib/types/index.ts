@@ -25,34 +25,7 @@ export type LineCoordinateState = {
   id: string | number;
 } & LineCoordinate;
 
-export type AnnotationsState = {
-  boundingBoxes: BoundingBoxCoordinateState[];
-  lines: LineCoordinateState[];
-};
-
 export type Offest = { dx: number; dy: number };
-
-export type AnyAnnotation = {
-  lineCoordinate?: LineCoordinate;
-  boundingBoxCoordinate?: BoundingBoxCoordinate;
-};
-
-export type AnnotationState = {
-  boundingBoxes: BoundingBoxCoordinateState[];
-  lines: LineCoordinateState[];
-  currentAnnotationIds: Set<string>;
-};
-
-export type AnnotationAction = {
-  type: string;
-  payload: {
-    coordinates: BoundingBoxCoordinate | LineCoordinate;
-    context: CanvasRenderingContext2D;
-    offsets: Offest;
-    styles: LineAnnotationStyles | BBAnnotationStyles | null;
-    id: string;
-  };
-};
 
 export type LineAnnotationStyles = {
   strokeColor: string;
@@ -70,3 +43,44 @@ export type AnnotationReducerConfig = {
   defaultBoundingBoxStyles: BBAnnotationStyles;
   defaultLineStyles: LineAnnotationStyles;
 };
+
+export type LineAnnotationPropsInternal = {
+  styles: LineAnnotationStyles;
+  id: string;
+} & LineCoordinate;
+
+export type BoundingBoxAnnotationPropsInternal = {
+  styles: BBAnnotationStyles;
+  id: string;
+} & BoundingBoxCoordinate;
+
+export type AnnotationsStateInternal = {
+  boundingBoxes: BoundingBoxAnnotationPropsInternal[];
+  lines: LineAnnotationPropsInternal[];
+};
+
+export type AnyAnnotation = {
+  lineCoordinate?: LineAnnotationPropsInternal;
+  boundingBoxCoordinate?: BoundingBoxAnnotationPropsInternal;
+};
+
+export enum AnnotationTypes {
+  BoundingBox = "BoundingBox",
+  Line = "Line",
+}
+
+export type CurrentlyInteractingAnnotation = {
+  type: AnnotationTypes;
+  annotationSide: "lineStart" | "lineEnd" | "boundingBox";
+  annotation: BoundingBoxAnnotationPropsInternal | LineAnnotationPropsInternal;
+};
+
+export type OnAnnotationDraw = (
+  currentAnnotationState: AnnotationsStateInternal,
+  newAnnotation: AnyAnnotation
+) => void;
+
+export type OnAnnotationMoving = (
+  currentAnnotationState: AnnotationsStateInternal,
+  updatedAnnotation: AnyAnnotation
+) => void;

@@ -1,4 +1,3 @@
-import { MOUSE_POINT_OFFSET } from "../constants";
 import {
   ClientCoordinate,
   LineAnnotationStyles,
@@ -50,12 +49,25 @@ export const drawLine = (input: {
 export const getLineCoordatesForUserDraw = (
   mousePos: XYCoordinate,
   client: ClientCoordinate,
-  offset: Offest
+  offset: Offest,
+  mousePointOffset: Offest
 ) => {
-  const x1 = mousePos.x - offset.dx - MOUSE_POINT_OFFSET;
-  const y1 = mousePos.y - offset.dy - MOUSE_POINT_OFFSET;
-  const x2 = client.clientX - offset.dx - MOUSE_POINT_OFFSET;
-  const y2 = client.clientY - offset.dy - MOUSE_POINT_OFFSET;
+  const x1 = mousePos.x - offset.dx - mousePointOffset.dx;
+  const y1 = mousePos.y - offset.dy - mousePointOffset.dy;
+  const x2 = client.clientX - offset.dx - mousePointOffset.dx;
+  const y2 = client.clientY - offset.dy - mousePointOffset.dy;
 
   return { x1, y1, x2, y2 };
+};
+
+export const getLineCoordatesForUserUpdate = (
+  startCoordinates: XYCoordinate,
+  endCoordinates: XYCoordinate
+) => {
+  return {
+    x1: startCoordinates.x,
+    y1: startCoordinates.y,
+    x2: endCoordinates.x,
+    y2: endCoordinates.y,
+  };
 };

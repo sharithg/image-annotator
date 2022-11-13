@@ -1,172 +1,355 @@
 import { useEffect, useRef, useState } from "react";
-import { getBoxCoordatesForUserDraw } from "./utils/box";
-import { AnyAnnotation, XYCoordinate } from "./types";
+import {
+  drawBox,
+  getBoxCoordatesForUserDraw,
+  getBoxCoordatesForUserUpdate,
+} from "./utils/box";
+import {
+  AnnotationTypes,
+  BoundingBoxAnnotationPropsInternal,
+  ClientCoordinate,
+  CurrentlyInteractingAnnotation,
+  LineAnnotationPropsInternal,
+  LineAnnotationStyles,
+  Offest,
+} from "./types";
 import { validateAnnotations } from "./utils/annotations";
-import { getLineCoordatesForUserDraw } from "./utils/line";
-import { AnnotationsProps } from "./types/props";
+import { drawLine, getLineCoordatesForUserDraw } from "./utils/line";
+import { AnnotationsProps, SharedComponentProps } from "./types/props";
 import { useAnnotations } from "./AnnotationImageContext";
 import { drawImage } from "./utils/image";
+import {
+  getClientCoordinatesOnCanavs,
+  isHoveringOnBoxAnnotation,
+  isHoveringOnLineAnnotation,
+} from "./utils/interactions";
+import { v4 as uuidv4 } from "uuid";
 
-interface Props {
-  annotations: AnnotationsProps;
-  imageSrc: string;
-  drawMode?: string;
-  onAnnotationDraw?: (newAnnotation: AnyAnnotation) => void;
-  height?: number;
-  width?: number;
-}
+type AnnotationImageProps = {
+  offsets: Offest;
+  canvasHeightAndWidth: {
+    height: number;
+    width: number;
+  };
+} & SharedComponentProps;
 
-const AnnotationImage: React.FC<Props> = ({
+const AnnotationImage: React.FC<AnnotationImageProps> = ({
   annotations,
-  imageSrc,
   drawMode,
   onAnnotationDraw,
-  width,
-  height,
+  onAnnotationMoving,
+  offsets,
+  canvasHeightAndWidth,
+  onAnnotationUpdate,
 }) => {
-  validateAnnotations(annotations);
+  const [
+    currentInterationStartMousePosition,
+    setCurrentInterationStartMousePosition,
+  ] = useState<React.MouseEvent<HTMLCanvasElement, MouseEvent> | null>(null);
 
-  const canvasHeightAndWidth = {
-    height: height ?? 600,
-    width: width ?? 1000,
-  };
+  const [currentInteractionAnnotation, setCurrentInteractionAnnotation] =
+    useState<CurrentlyInteractingAnnotation | null>(null);
 
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [xOffset, setXOffset] = useState(0);
-  const [yOffset, setYOffset] = useState(0);
-  const [currentDrawingMousePosition, setCurrentDrawingMousePosition] =
-    useState<XYCoordinate | null>(null);
+  const drawingCanvasRef = useRef<HTMLCanvasElement>(null);
 
-  const { dispatchAnnotation, imageFetchHeaders, activeAnnotations } =
-    useAnnotations();
+  const {
+    dispatchAnnotation,
+    defaultBoundingBoxStyles,
+    defaultLineStyles,
+    userAnnotationState,
+  } = useAnnotations();
 
-  const context = canvasRef.current?.getContext(
-    "2d"
-  ) as CanvasRenderingContext2D;
+  const userAnnotations = validateAnnotations(
+    annotations,
+    defaultBoundingBoxStyles,
+    defaultLineStyles
+  );
 
-  const offsets = {
-    dx: xOffset,
-    dy: yOffset,
-  };
-
-  useEffect(() => {
-    if (imageLoaded) {
-      return;
-    }
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d") as CanvasRenderingContext2D;
-    context.fillStyle = "#000000";
-    context.fillRect(0, 0, context.canvas.width, context.canvas.height);
-
-    drawImage(
-      context,
-      canvas as HTMLCanvasElement,
-      imageSrc,
-      imageFetchHeaders ?? null,
-      (dx, dy) => {
-        setImageLoaded(true);
-        setXOffset(dx);
-        setYOffset(dy);
-      }
-    );
-  }, [imageLoaded]);
+  const canvas = drawingCanvasRef.current;
+  const context = canvas?.getContext("2d") as CanvasRenderingContext2D;
 
   useEffect(() => {
-    if (imageLoaded) {
-      annotations.boundingBoxes.forEach((box) => {
-        dispatchAnnotation({
-          type: "ADD_BB_ANNOTATION",
-          payload: {
-            coordinates: box,
-            context,
-            offsets,
-            styles: box.styles ?? null,
-            id: box.id,
-          },
-        });
+    const canvasCurr = drawingCanvasRef.current;
+    const contextCurr = canvasCurr?.getContext(
+      "2d"
+    ) as CanvasRenderingContext2D;
+
+    userAnnotations.boundingBoxes.forEach((box) => {
+      dispatchAnnotation({
+        type: "ADD_BB_ANNOTATION",
+        payload: {
+          coordinates: box,
+          context: contextCurr,
+          offsets,
+          styles: box.styles ?? defaultBoundingBoxStyles,
+          id: box.id,
+          onAnnotationDraw,
+        },
       });
-    }
-  }, [imageLoaded, annotations]);
+    });
+    userAnnotations.lines.forEach((line) => {
+      dispatchAnnotation({
+        type: "ADD_LINE_ANNOTATION",
+        payload: {
+          coordinates: line,
+          context: contextCurr,
+          offsets,
+          styles: line.styles ?? defaultLineStyles,
+          id: line.id,
+          onAnnotationDraw,
+        },
+      });
+    });
+  }, []);
 
   useEffect(() => {
-    if (imageLoaded) {
-      annotations.lines.forEach((line) => {
-        dispatchAnnotation({
-          type: "ADD_LINE_ANNOTATION",
-          payload: {
-            coordinates: line,
-            context,
-            offsets,
-            styles: line.styles ?? null,
-            id: line.id,
-          },
-        });
-      });
-    }
-  }, [imageLoaded, annotations]);
+    const canvasCurr = drawingCanvasRef.current;
+    const contextCurr = canvasCurr?.getContext(
+      "2d"
+    ) as CanvasRenderingContext2D;
 
-  const handleDrawLine = (
-    e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
-  ) => {
-    if (currentDrawingMousePosition) {
+    contextCurr.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
+
+    userAnnotationState.boundingBoxes.forEach((box) => {
+      drawBox({
+        context: contextCurr,
+        offset: offsets,
+        coordintate: {
+          x: box.x,
+          y: box.y,
+          width: box.width,
+          height: box.height,
+        },
+        styles: box.styles,
+      });
+    });
+    userAnnotationState.lines.forEach((line) => {
+      drawLine({
+        context: contextCurr,
+        offset: offsets,
+        coordintate: {
+          x1: line.x1,
+          y1: line.y1,
+          x2: line.x2,
+          y2: line.y2,
+        },
+        styles: line.styles,
+      });
+    });
+  }, [userAnnotationState]);
+
+  const handleDrawLine = (mouseCoordinates: ClientCoordinate) => {
+    if (currentInterationStartMousePosition) {
+      var rect = canvas?.getBoundingClientRect() as DOMRect;
+
       const coordintates = getLineCoordatesForUserDraw(
-        currentDrawingMousePosition,
-        e,
-        offsets
+        {
+          x: currentInterationStartMousePosition.clientX,
+          y: currentInterationStartMousePosition.clientY,
+        },
+        mouseCoordinates,
+        offsets,
+        {
+          dx: rect.left,
+          dy: rect.top,
+        }
       );
-      if (onAnnotationDraw) {
-        onAnnotationDraw({
-          lineCoordinate: coordintates,
-        });
-      }
+      dispatchAnnotation({
+        type: "ADD_LINE_ANNOTATION",
+        payload: {
+          coordinates: coordintates,
+          context,
+          offsets,
+          styles: defaultLineStyles,
+          id: uuidv4(),
+        },
+      });
     }
   };
 
   const handleDrawBox = (
-    e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
+    startCoordinate: ClientCoordinate,
+    endCoordinate: ClientCoordinate
   ) => {
-    if (currentDrawingMousePosition) {
-      const cordinates = getBoxCoordatesForUserDraw(
-        currentDrawingMousePosition,
-        e,
-        offsets
-      );
-      if (onAnnotationDraw) {
-        onAnnotationDraw({
-          boundingBoxCoordinate: cordinates,
-        });
-      }
-    }
+    var rect = canvas?.getBoundingClientRect() as DOMRect;
+
+    const startUserInteractionCoordinates = getClientCoordinatesOnCanavs(
+      startCoordinate,
+      offsets,
+      rect
+    );
+    const endUserInteractionCoordinates = getClientCoordinatesOnCanavs(
+      endCoordinate,
+      offsets,
+      rect
+    );
+
+    const cordinates = getBoxCoordatesForUserDraw(
+      startUserInteractionCoordinates,
+      endUserInteractionCoordinates
+    );
+    dispatchAnnotation({
+      type: "ADD_BB_ANNOTATION",
+      payload: {
+        coordinates: cordinates,
+        context,
+        offsets,
+        styles: defaultBoundingBoxStyles,
+        id: uuidv4(),
+      },
+    });
   };
 
-  const handleDrawAnnotation = (
+  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    var rect = canvas?.getBoundingClientRect() as DOMRect;
+    const clientCoordintates = getClientCoordinatesOnCanavs(e, offsets, rect);
+    const hoveringBoxAnnotation = isHoveringOnBoxAnnotation(
+      userAnnotationState,
+      clientCoordintates
+    );
+    const hoveringLine = isHoveringOnLineAnnotation(
+      userAnnotationState,
+      clientCoordintates
+    );
+    if (hoveringBoxAnnotation) {
+      setCurrentInteractionAnnotation({
+        type: AnnotationTypes.BoundingBox,
+        annotation: hoveringBoxAnnotation,
+        annotationSide: "boundingBox",
+      });
+    }
+    if (hoveringLine) {
+      setCurrentInteractionAnnotation({
+        type: AnnotationTypes.Line,
+        annotation: hoveringLine.annotaion,
+        annotationSide:
+          hoveringLine.handle === "first" ? "lineStart" : "lineEnd",
+      });
+    }
+    setCurrentInterationStartMousePosition(e);
+  };
+
+  const handleMouseUp = (
     e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
   ) => {
+    if (currentInteractionAnnotation && currentInterationStartMousePosition) {
+      if (onAnnotationUpdate) {
+        onAnnotationUpdate(userAnnotationState, {
+          boundingBoxCoordinate:
+            currentInteractionAnnotation.type === AnnotationTypes.BoundingBox
+              ? (currentInteractionAnnotation.annotation as BoundingBoxAnnotationPropsInternal)
+              : undefined,
+          lineCoordinate:
+            currentInteractionAnnotation.type === AnnotationTypes.Line
+              ? (currentInteractionAnnotation.annotation as LineAnnotationPropsInternal)
+              : undefined,
+        });
+      }
+      setCurrentInterationStartMousePosition(null);
+      setCurrentInteractionAnnotation(null);
+      return;
+    }
     if (!drawMode) return;
     if (drawMode === "line") {
       handleDrawLine(e);
     }
     if (drawMode === "box") {
-      handleDrawBox(e);
+      if (currentInterationStartMousePosition) {
+        handleDrawBox(currentInterationStartMousePosition, e);
+      }
     }
-    setCurrentDrawingMousePosition(null);
+    setCurrentInterationStartMousePosition(null);
+    setCurrentInteractionAnnotation(null);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    var rect = canvas?.getBoundingClientRect() as DOMRect;
+
+    const interactionCoordinates = getClientCoordinatesOnCanavs(
+      e,
+      offsets,
+      rect
+    );
+
+    if (
+      currentInteractionAnnotation &&
+      currentInteractionAnnotation.type === AnnotationTypes.BoundingBox &&
+      currentInterationStartMousePosition
+    ) {
+      const cordinates = getBoxCoordatesForUserUpdate(interactionCoordinates, {
+        height: (
+          currentInteractionAnnotation.annotation as BoundingBoxAnnotationPropsInternal
+        ).height,
+        width: (
+          currentInteractionAnnotation.annotation as BoundingBoxAnnotationPropsInternal
+        ).width,
+      });
+      dispatchAnnotation({
+        type: "UPDATE_BB_ANNOTATION",
+        payload: {
+          coordinates: cordinates,
+          context,
+          offsets,
+          styles: currentInteractionAnnotation.annotation.styles,
+          id: currentInteractionAnnotation.annotation.id,
+          onAnnotationMoving,
+        },
+      });
+    }
+
+    if (
+      currentInteractionAnnotation &&
+      currentInteractionAnnotation.type === AnnotationTypes.Line &&
+      currentInterationStartMousePosition
+    ) {
+      const currentAnnotation =
+        currentInteractionAnnotation.annotation as LineAnnotationPropsInternal;
+
+      const isInteractingWithStart =
+        currentInteractionAnnotation.annotationSide === "lineStart";
+
+      const newLineCoordinates = {
+        x1: isInteractingWithStart
+          ? interactionCoordinates.x
+          : currentAnnotation.x1,
+        x2: isInteractingWithStart
+          ? currentAnnotation.x2
+          : interactionCoordinates.x,
+        y1: isInteractingWithStart
+          ? interactionCoordinates.y
+          : currentAnnotation.y1,
+        y2: isInteractingWithStart
+          ? currentAnnotation.y2
+          : interactionCoordinates.y,
+      };
+      dispatchAnnotation({
+        type: "UPDATE_LINE_ANNOTATION",
+        payload: {
+          coordinates: newLineCoordinates,
+          context,
+          offsets,
+          styles: currentInteractionAnnotation.annotation
+            .styles as LineAnnotationStyles,
+          id: currentInteractionAnnotation.annotation.id,
+          onAnnotationMoving,
+        },
+      });
+    }
   };
 
   return (
-    <div className="App">
-      <canvas
-        ref={canvasRef}
-        onMouseDown={(e) => {
-          setCurrentDrawingMousePosition({
-            x: e.clientX,
-            y: e.clientY,
-          });
-        }}
-        onMouseUp={handleDrawAnnotation}
-        {...canvasHeightAndWidth}
-      />
-    </div>
+    <canvas
+      {...canvasHeightAndWidth}
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+      }}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onMouseMove={handleMouseMove}
+      ref={drawingCanvasRef}
+    />
   );
 };
 
