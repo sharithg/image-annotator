@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
 import { AnnotationImage } from "./lib";
-import { AnnotationState, AnyAnnotation } from "./lib/types";
+import { AnyAnnotation } from "./lib/types";
 import { v4 as uuidv4 } from "uuid";
 
 const bbCoordinates = [
