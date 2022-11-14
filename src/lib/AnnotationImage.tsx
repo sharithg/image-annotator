@@ -12,24 +12,19 @@ import {
   CurrentlyInteractingAnnotation,
   LineAnnotationPropsInternal,
   LineAnnotationStyles,
-  LineCoordinate,
   Offest,
 } from "./types";
 import { validateAnnotations } from "./utils/annotations";
-import {
-  drawLine,
-  getLineCoordatesForUserDraw,
-  getOffsetToCenterOfLine,
-} from "./utils/line";
+import { drawLine, getLineCoordatesForUserDraw } from "./utils/line";
 import { SharedComponentProps } from "./types/props";
 import { useAnnotations } from "./AnnotationImageContext";
 import {
-  distanceBetweenPoints,
   getClientCoordinatesOnCanavs,
   isHoveringOnBoxAnnotation,
   isHoveringOnLineAnnotation,
 } from "./utils/interactions";
 import { v4 as uuidv4 } from "uuid";
+import { calculateLineCoordinatesForMouseMove } from "./utils/mouseEvents";
 
 type AnnotationImageProps = {
   offsets: Offest;
@@ -312,58 +307,10 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
       currentInteractionAnnotation.type === AnnotationTypes.Line &&
       currentInterationStartMousePosition
     ) {
-      const annotationSide = currentInteractionAnnotation.annotationSide;
-
-      let newLineCoordinates: LineCoordinate = {
-        x1: 0,
-        y1: 0,
-        x2: 0,
-        y2: 0,
-      };
-      if (annotationSide === "lineStart" || annotationSide === "lineEnd") {
-        const currentAnnotation =
-          currentInteractionAnnotation.annotation as LineAnnotationPropsInternal;
-
-        const isInteractingWithStart = annotationSide === "lineStart";
-
-        if (isInteractingWithStart) {
-          newLineCoordinates = {
-            x1: interactionCoordinates.x,
-            y1: interactionCoordinates.y,
-            x2: currentAnnotation.x2,
-            y2: currentAnnotation.y2,
-          };
-        } else {
-          newLineCoordinates = {
-            x1: currentAnnotation.x1,
-            y1: currentAnnotation.y1,
-            x2: interactionCoordinates.x,
-            y2: interactionCoordinates.y,
-          };
-        }
-      } else {
-        const currentAnnotation =
-          currentInteractionAnnotation.annotation as LineAnnotationPropsInternal;
-
-        const lineLength = distanceBetweenPoints(
-          currentAnnotation.x1,
-          currentAnnotation.y1,
-          currentAnnotation.x2,
-          currentAnnotation.y2
-        );
-
-        const dx = interactionCoordinates.x - currentAnnotation.x1;
-        const dy = interactionCoordinates.y - currentAnnotation.y1;
-
-        newLineCoordinates = getOffsetToCenterOfLine(
-          currentAnnotation,
-          {
-            dx,
-            dy,
-          },
-          lineLength
-        );
-      }
+      const newLineCoordinates = calculateLineCoordinatesForMouseMove(
+        currentInteractionAnnotation,
+        interactionCoordinates
+      );
       dispatchAnnotation({
         type: "UPDATE_LINE_ANNOTATION",
         payload: {
