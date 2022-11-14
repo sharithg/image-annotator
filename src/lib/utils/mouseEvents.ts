@@ -1,6 +1,6 @@
 import {
   CurrentlyInteractingAnnotation,
-  LineAnnotationPropsInternal,
+  LineAnnotation,
   LineCoordinate,
   XYCoordinate,
 } from "../types";
@@ -15,7 +15,7 @@ export const calculateLineCoordinatesForMouseMove = (
 
   if (annotationSide === "lineStart" || annotationSide === "lineEnd") {
     const currentAnnotation =
-      currentInteractionAnnotation.annotation as LineAnnotationPropsInternal;
+      currentInteractionAnnotation.annotation as LineAnnotation;
 
     const isInteractingWithStart = annotationSide === "lineStart";
 
@@ -37,7 +37,7 @@ export const calculateLineCoordinatesForMouseMove = (
 
   if (annotationSide === "line") {
     const currentAnnotation =
-      currentInteractionAnnotation.annotation as LineAnnotationPropsInternal;
+      currentInteractionAnnotation.annotation as LineAnnotation;
 
     const lineLength = distanceBetweenPoints(
       currentAnnotation.x1,

@@ -7,10 +7,10 @@ import {
 } from "./utils/box";
 import {
   AnnotationTypes,
-  BoundingBoxAnnotationPropsInternal,
+  BoundingBoxAnnotation,
   ClientCoordinate,
   CurrentlyInteractingAnnotation,
-  LineAnnotationPropsInternal,
+  LineAnnotation,
   LineAnnotationStyles,
   Offest,
 } from "./types";
@@ -244,11 +244,11 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
         onAnnotationUpdate(userAnnotationState, {
           boundingBoxCoordinate:
             currentInteractionAnnotation.type === AnnotationTypes.BoundingBox
-              ? (currentInteractionAnnotation.annotation as BoundingBoxAnnotationPropsInternal)
+              ? (currentInteractionAnnotation.annotation as BoundingBoxAnnotation)
               : undefined,
           lineCoordinate:
             currentInteractionAnnotation.type === AnnotationTypes.Line
-              ? (currentInteractionAnnotation.annotation as LineAnnotationPropsInternal)
+              ? (currentInteractionAnnotation.annotation as LineAnnotation)
               : undefined,
         });
       }
@@ -284,7 +284,7 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
       currentInterationStartMousePosition
     ) {
       const currentAnnotation =
-        currentInteractionAnnotation.annotation as BoundingBoxAnnotationPropsInternal;
+        currentInteractionAnnotation.annotation as BoundingBoxAnnotation;
       const cordinates = getBoxCoordatesForUserUpdate(interactionCoordinates, {
         height: currentAnnotation.height,
         width: currentAnnotation.width,

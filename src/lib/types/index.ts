@@ -44,24 +44,24 @@ export type AnnotationReducerConfig = {
   defaultLineStyles: LineAnnotationStyles;
 };
 
-export type LineAnnotationPropsInternal = {
+export type LineAnnotation = {
   styles: LineAnnotationStyles;
   id: string;
 } & LineCoordinate;
 
-export type BoundingBoxAnnotationPropsInternal = {
+export type BoundingBoxAnnotation = {
   styles: BBAnnotationStyles;
   id: string;
 } & BoundingBoxCoordinate;
 
-export type AnnotationsStateInternal = {
-  boundingBoxes: BoundingBoxAnnotationPropsInternal[];
-  lines: LineAnnotationPropsInternal[];
+export type AnnotationsState = {
+  boundingBoxes: BoundingBoxAnnotation[];
+  lines: LineAnnotation[];
 };
 
 export type AnyAnnotation = {
-  lineCoordinate?: LineAnnotationPropsInternal;
-  boundingBoxCoordinate?: BoundingBoxAnnotationPropsInternal;
+  lineCoordinate?: LineAnnotation;
+  boundingBoxCoordinate?: BoundingBoxAnnotation;
 };
 
 export enum AnnotationTypes {
@@ -72,15 +72,15 @@ export enum AnnotationTypes {
 export type CurrentlyInteractingAnnotation = {
   type: AnnotationTypes;
   annotationSide: "lineStart" | "lineEnd" | "line" | "boundingBox";
-  annotation: BoundingBoxAnnotationPropsInternal | LineAnnotationPropsInternal;
+  annotation: BoundingBoxAnnotation | LineAnnotation;
 };
 
 export type OnAnnotationDraw = (
-  currentAnnotationState: AnnotationsStateInternal,
+  currentAnnotationState: AnnotationsState,
   newAnnotation: AnyAnnotation
 ) => void;
 
 export type OnAnnotationMoving = (
-  currentAnnotationState: AnnotationsStateInternal,
+  currentAnnotationState: AnnotationsState,
   updatedAnnotation: AnyAnnotation
 ) => void;

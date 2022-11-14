@@ -1,5 +1,5 @@
 import {
-  AnnotationsStateInternal,
+  AnnotationsState,
   BBAnnotationStyles,
   LineAnnotationStyles,
 } from "../types";
@@ -9,7 +9,7 @@ export const validateAnnotations = (
   annotations: AnnotationsProps,
   defaultBoundingBoxStyles: BBAnnotationStyles,
   defaultLineStyles: LineAnnotationStyles
-): AnnotationsStateInternal => {
+): AnnotationsState => {
   const { boundingBoxes, lines } = annotations;
   const boundingBoxIds = new Set();
   const lineIds = new Set();

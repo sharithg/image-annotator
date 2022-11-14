@@ -1,6 +1,6 @@
 import {
   ClientCoordinate,
-  LineAnnotationPropsInternal,
+  LineAnnotation,
   LineAnnotationStyles,
   LineCoordinate,
   Offest,
@@ -79,7 +79,7 @@ const operators = {
 };
 
 export const getOffsetToCenterOfLine = (
-  coordinates: LineAnnotationPropsInternal,
+  coordinates: LineAnnotation,
   offset: Offest,
   lineLength: { xDistance: number; yDistance: number }
 ) => {

@@ -1,7 +1,7 @@
 import {
-  AnnotationsStateInternal,
-  BoundingBoxAnnotationPropsInternal,
-  LineAnnotationPropsInternal,
+  AnnotationsState,
+  BoundingBoxAnnotation,
+  LineAnnotation,
 } from "../types/index";
 import {
   BBAnnotationStyles,
@@ -11,9 +11,7 @@ import {
 } from "../types";
 import { AnnotationAction } from "./types";
 
-type BoundingBoxOrLineAnnotation =
-  | BoundingBoxAnnotationPropsInternal
-  | LineAnnotationPropsInternal;
+type BoundingBoxOrLineAnnotation = BoundingBoxAnnotation | LineAnnotation;
 
 const filterDuplicateAnnotations = <T>(
   annotations: BoundingBoxOrLineAnnotation[]
@@ -32,9 +30,9 @@ const filterDuplicateAnnotations = <T>(
 };
 
 export const annotationImageReducer = (
-  state: AnnotationsStateInternal,
+  state: AnnotationsState,
   action: AnnotationAction
-): AnnotationsStateInternal => {
+): AnnotationsState => {
   switch (action.type) {
     case "ADD_BB_ANNOTATION": {
       const newAnnotationBox = {
@@ -42,15 +40,14 @@ export const annotationImageReducer = (
         displayed: true,
         styles: action.payload.styles as BBAnnotationStyles,
         id: action.payload.id,
-      } as BoundingBoxAnnotationPropsInternal;
+      } as BoundingBoxAnnotation;
 
-      const newStateAddBB: AnnotationsStateInternal = {
+      const newStateAddBB: AnnotationsState = {
         ...state,
-        boundingBoxes:
-          filterDuplicateAnnotations<BoundingBoxAnnotationPropsInternal>([
-            ...state.boundingBoxes,
-            newAnnotationBox,
-          ]),
+        boundingBoxes: filterDuplicateAnnotations<BoundingBoxAnnotation>([
+          ...state.boundingBoxes,
+          newAnnotationBox,
+        ]),
       };
 
       if (action.payload.onAnnotationDraw) {
@@ -74,7 +71,7 @@ export const annotationImageReducer = (
         return box;
       });
 
-      const newStateUpdateBB: AnnotationsStateInternal = {
+      const newStateUpdateBB: AnnotationsState = {
         ...state,
         boundingBoxes: updatedBoundingBoxes,
       };
@@ -83,7 +80,7 @@ export const annotationImageReducer = (
         action.payload.onAnnotationMoving(newStateUpdateBB, {
           boundingBoxCoordinate: updatedBoundingBoxes.find(
             (box) => box.id === action.payload.id
-          ) as BoundingBoxAnnotationPropsInternal,
+          ) as BoundingBoxAnnotation,
         });
       }
 
@@ -95,11 +92,11 @@ export const annotationImageReducer = (
         displayed: true,
         id: action.payload.id,
         styles: action.payload.styles as LineAnnotationStyles,
-      } as LineAnnotationPropsInternal;
+      } as LineAnnotation;
 
       const newStateAddLine = {
         ...state,
-        lines: filterDuplicateAnnotations<LineAnnotationPropsInternal>([
+        lines: filterDuplicateAnnotations<LineAnnotation>([
           ...state.lines,
           newAnnotationLine,
         ]),
@@ -126,7 +123,7 @@ export const annotationImageReducer = (
         return line;
       });
 
-      const newStateUpdateLine: AnnotationsStateInternal = {
+      const newStateUpdateLine: AnnotationsState = {
         ...state,
         lines: updatedLines,
       };
@@ -135,7 +132,7 @@ export const annotationImageReducer = (
         action.payload.onAnnotationMoving(newStateUpdateLine, {
           lineCoordinate: updatedLines.find(
             (line) => line.id === action.payload.id
-          ) as LineAnnotationPropsInternal,
+          ) as LineAnnotation,
         });
       }
 

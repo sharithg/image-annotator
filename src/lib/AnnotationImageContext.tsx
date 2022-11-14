@@ -2,7 +2,7 @@ import React, { useContext, createContext, useReducer } from "react";
 import { annotationImageReducer } from "./annotationReducer";
 import { AnnotationAction } from "./annotationReducer/types";
 import {
-  AnnotationsStateInternal,
+  AnnotationsState,
   BBAnnotationStyles,
   LineAnnotationStyles,
 } from "./types";
@@ -19,7 +19,7 @@ interface Context {
   imageFetchHeaders: HeadersInit | null;
   defaultBoundingBoxStyles: BBAnnotationStyles;
   defaultLineStyles: LineAnnotationStyles;
-  userAnnotationState: AnnotationsStateInternal;
+  userAnnotationState: AnnotationsState;
 }
 
 const AnnotationsContext = createContext({} as Context);

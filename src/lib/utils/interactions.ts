@@ -1,5 +1,5 @@
 import {
-  AnnotationsStateInternal,
+  AnnotationsState,
   ClientCoordinate,
   Offest,
   XYCoordinate,
@@ -57,7 +57,7 @@ export const distanceBetweenPoints = (
 };
 
 export const isHoveringOnBoxAnnotation = (
-  currentAnnotations: AnnotationsStateInternal,
+  currentAnnotations: AnnotationsState,
   coordinates: { x: number; y: number }
 ) => {
   const { x: interactionX, y: interactionY } = coordinates;
@@ -100,7 +100,7 @@ export const isHoveringOnBoxAnnotation = (
 };
 
 export const isHoveringOnLineAnnotation = (
-  currentAnnotations: AnnotationsStateInternal,
+  currentAnnotations: AnnotationsState,
   coordinates: { x: number; y: number }
 ) => {
   const { x: interactionX, y: interactionY } = coordinates;
