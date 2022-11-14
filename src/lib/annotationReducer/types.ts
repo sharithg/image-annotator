@@ -16,6 +16,7 @@ type AddBBAnnotation = {
     offsets: Offest;
     styles: BBAnnotationStyles;
     onAnnotationDraw?: OnAnnotationDraw;
+    id: string;
   };
 };
 
@@ -39,6 +40,7 @@ type AddLineAnnotation = {
     offsets: Offest;
     styles: LineAnnotationStyles;
     onAnnotationDraw?: OnAnnotationDraw;
+    id: string;
   };
 };
 

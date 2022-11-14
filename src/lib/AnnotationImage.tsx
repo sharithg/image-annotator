@@ -16,7 +16,11 @@ import {
   Offest,
 } from "./types";
 import { validateAnnotations } from "./utils/annotations";
-import { drawLine, getLineCoordatesForUserDraw } from "./utils/line";
+import {
+  drawLine,
+  getLineCoordatesForUserDraw,
+  getOffsetToCenterOfLine,
+} from "./utils/line";
 import { SharedComponentProps } from "./types/props";
 import { useAnnotations } from "./AnnotationImageContext";
 import {
@@ -25,6 +29,7 @@ import {
   isHoveringOnBoxAnnotation,
   isHoveringOnLineAnnotation,
 } from "./utils/interactions";
+import { v4 as uuidv4 } from "uuid";
 
 type AnnotationImageProps = {
   offsets: Offest;
@@ -60,6 +65,8 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
     userAnnotationState,
   } = useAnnotations();
 
+  console.log(userAnnotationState);
+
   const userAnnotations = validateAnnotations(
     annotations,
     defaultBoundingBoxStyles,
@@ -84,6 +91,7 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
           offsets,
           styles: box.styles ?? defaultBoundingBoxStyles,
           onAnnotationDraw,
+          id: box.id,
         },
       });
     });
@@ -96,6 +104,7 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
           offsets,
           styles: line.styles ?? defaultLineStyles,
           onAnnotationDraw,
+          id: line.id,
         },
       });
     });
@@ -160,6 +169,7 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
           context,
           offsets,
           styles: defaultLineStyles,
+          id: uuidv4(),
         },
       });
     }
@@ -193,6 +203,7 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
         context,
         offsets,
         styles: defaultBoundingBoxStyles,
+        id: uuidv4(),
       },
     });
   };
@@ -344,12 +355,14 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
         const dx = interactionCoordinates.x - currentAnnotation.x1;
         const dy = interactionCoordinates.y - currentAnnotation.y1;
 
-        newLineCoordinates = {
-          x1: currentAnnotation.x1 + dx + lineLength.xDistance / 2,
-          y1: currentAnnotation.y1 + dy - lineLength.yDistance / 2,
-          x2: currentAnnotation.x2 + dx + lineLength.xDistance / 2,
-          y2: currentAnnotation.y2 + dy - lineLength.yDistance / 2,
-        };
+        newLineCoordinates = getOffsetToCenterOfLine(
+          currentAnnotation,
+          {
+            dx,
+            dy,
+          },
+          lineLength
+        );
       }
       dispatchAnnotation({
         type: "UPDATE_LINE_ANNOTATION",

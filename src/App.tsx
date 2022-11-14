@@ -46,7 +46,7 @@ const lineCoordinates = [
 ];
 
 function App() {
-  const [drawType, setDrawType] = useState("box");
+  const [drawType, setDrawType] = useState("line");
   const [boundingBoxAnnotations, setBoundingBoxAnnotations] =
     useState(bbCoordinates);
   const [lineAnnotations, setLineAnnotations] = useState(lineCoordinates);

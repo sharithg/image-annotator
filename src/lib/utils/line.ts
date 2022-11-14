@@ -1,5 +1,6 @@
 import {
   ClientCoordinate,
+  LineAnnotationPropsInternal,
   LineAnnotationStyles,
   LineCoordinate,
   Offest,
@@ -69,5 +70,48 @@ export const getLineCoordatesForUserUpdate = (
     y1: startCoordinates.y,
     x2: endCoordinates.x,
     y2: endCoordinates.y,
+  };
+};
+
+const operators = {
+  "+": (a: number, b: number) => a + b,
+  "-": (a: number, b: number) => a - b,
+};
+
+export const getOffsetToCenterOfLine = (
+  coordinates: LineAnnotationPropsInternal,
+  offset: Offest,
+  lineLength: { xDistance: number; yDistance: number }
+) => {
+  let xOperator: keyof typeof operators = "+";
+  let yOperator: keyof typeof operators = "-";
+
+  if (coordinates.x1 < coordinates.x2) {
+    xOperator = "-";
+  }
+
+  if (coordinates.y1 > coordinates.y2) {
+    yOperator = "+";
+  }
+
+  console.log(xOperator, yOperator);
+
+  return {
+    x1: operators[xOperator](
+      coordinates.x1 + offset.dx,
+      lineLength.xDistance / 2
+    ),
+    y1: operators[yOperator](
+      coordinates.y1 + offset.dy,
+      lineLength.yDistance / 2
+    ),
+    x2: operators[xOperator](
+      coordinates.x2 + offset.dx,
+      lineLength.xDistance / 2
+    ),
+    y2: operators[yOperator](
+      coordinates.y2 + offset.dy,
+      lineLength.yDistance / 2
+    ),
   };
 };
