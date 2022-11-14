@@ -5,6 +5,8 @@ import {
   XYCoordinate,
 } from "../types";
 
+const MIN_INTERACTION_STROKE_WIDTH = 7;
+
 export const getClientCoordinatesOnCanavs = (
   event: ClientCoordinate,
   offset: Offest,
@@ -106,18 +108,20 @@ export const isHoveringOnLineAnnotation = (
   for (const line of currentAnnotations.lines) {
     const { x1, x2, y1, y2, styles } = line;
 
+    const handleWidth = styles.strokeWidth + MIN_INTERACTION_STROKE_WIDTH;
+
     if (styles.showHandles) {
       const isInteractingWithFirstHandle =
-        interactionX >= x1 - 5 &&
-        interactionX <= x1 + 5 &&
-        interactionY >= y1 - 5 &&
-        interactionY <= y1 + 5;
+        interactionX >= x1 - handleWidth &&
+        interactionX <= x1 + handleWidth &&
+        interactionY >= y1 - handleWidth &&
+        interactionY <= y1 + handleWidth;
 
       const isInteractingWithSecondHandle =
-        interactionX >= x2 - 5 &&
-        interactionX <= x2 + 5 &&
-        interactionY >= y2 - 5 &&
-        interactionY <= y2 + 5;
+        interactionX >= x2 - handleWidth &&
+        interactionX <= x2 + handleWidth &&
+        interactionY >= y2 - handleWidth &&
+        interactionY <= y2 + handleWidth;
 
       const isInteractingWithLine =
         isInteractingWithFirstHandle || isInteractingWithSecondHandle;
@@ -137,7 +141,9 @@ export const isHoveringOnLineAnnotation = (
       y1,
       x2,
       y2,
-      styles.strokeWidth
+      styles.strokeWidth > MIN_INTERACTION_STROKE_WIDTH
+        ? styles.strokeWidth
+        : MIN_INTERACTION_STROKE_WIDTH
     );
 
     if (isInteractingWithLine) {

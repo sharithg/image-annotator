@@ -37,8 +37,8 @@ const lineCoordinates = [
     x2: 100,
     y2: 130,
     styles: {
-      strokeColor: "red",
-      strokeWidth: 10,
+      strokeColor: "purple",
+      strokeWidth: 6,
       strokeDashArray: [5, 5],
       showHandles: true,
     },
