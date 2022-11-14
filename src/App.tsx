@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import "./App.css";
 import { Annotator } from "./lib";
-import { AnnotationsStateInternal, AnyAnnotation } from "./lib/types";
+import {
+  AnnotationsStateInternal,
+  AnyAnnotation,
+  BoundingBoxAnnotationPropsInternal,
+  LineAnnotationPropsInternal,
+} from "./lib/types";
 import { v4 as uuidv4 } from "uuid";
 
 const bbCoordinates = [
@@ -47,10 +52,12 @@ const lineCoordinates = [
 
 function App() {
   const [drawType, setDrawType] = useState("line");
-  const [boundingBoxAnnotations, setBoundingBoxAnnotations] = useState<any[]>(
-    []
-  );
-  const [lineAnnotations, setLineAnnotations] = useState<any[]>([]);
+  const [boundingBoxAnnotations, setBoundingBoxAnnotations] = useState<
+    BoundingBoxAnnotationPropsInternal[]
+  >([]);
+  const [lineAnnotations, setLineAnnotations] = useState<
+    LineAnnotationPropsInternal[]
+  >([]);
 
   const handleAnnotationDraw = (
     currentAnnotationState: AnnotationsStateInternal,
