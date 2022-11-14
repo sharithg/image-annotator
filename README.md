@@ -4,7 +4,9 @@ React library for annotating images
 
 ## Philosophy
 
-This libary is meant for the developer to handle the logic of what annotations are displayed and the library will handle the displaying of the annotations and end user interations.
+This libary is meant for the developer to handle the logic of what annotations are displayed and the library will handle the displaying of the annotations and end user interactions.
+
+## Usage
 
 [Code](https://github.com/sharithg/image-annotator/blob/main/src/App.tsx)
 
