@@ -47,9 +47,10 @@ const lineCoordinates = [
 
 function App() {
   const [drawType, setDrawType] = useState("line");
-  const [boundingBoxAnnotations, setBoundingBoxAnnotations] =
-    useState(bbCoordinates);
-  const [lineAnnotations, setLineAnnotations] = useState(lineCoordinates);
+  const [boundingBoxAnnotations, setBoundingBoxAnnotations] = useState<any[]>(
+    []
+  );
+  const [lineAnnotations, setLineAnnotations] = useState<any[]>([]);
 
   const handleAnnotationDraw = (
     currentAnnotationState: AnnotationsStateInternal,
@@ -58,24 +59,11 @@ function App() {
     if (newAnnotation.boundingBoxCoordinate) {
       setBoundingBoxAnnotations([
         ...boundingBoxAnnotations,
-        {
-          ...newAnnotation.boundingBoxCoordinate,
-          id: uuidv4(),
-          styles: {
-            strokeColor: "red",
-            strokeWidth: 10,
-          },
-        },
+        newAnnotation.boundingBoxCoordinate,
       ]);
     }
     if (newAnnotation.lineCoordinate) {
-      setLineAnnotations([
-        ...lineAnnotations,
-        {
-          ...newAnnotation.lineCoordinate,
-          id: uuidv4(),
-        },
-      ]);
+      setLineAnnotations([...lineAnnotations, newAnnotation.lineCoordinate]);
     }
   };
 
@@ -114,10 +102,28 @@ function App() {
         </div>
       </div>
       <div>
-        <p>New Annotations</p>
+        <p>Box Annotations</p>
+        <ul>
+          {boundingBoxAnnotations.map((annotation) => (
+            <li
+              style={{ color: annotation.styles.strokeColor }}
+              key={annotation.id}
+            >
+              X: {annotation.x.toFixed(2)}, Y: {annotation.y.toFixed(2)}, H:{" "}
+              {annotation.height.toFixed(2)}, W: {annotation.width.toFixed(2)}
+            </li>
+          ))}
+        </ul>
+        <p>Line Annotations</p>
         <ul>
           {lineAnnotations.map((annotation) => (
-            <li key={annotation.id}>{JSON.stringify(annotation)}</li>
+            <li
+              style={{ color: annotation.styles.strokeColor }}
+              key={annotation.id}
+            >
+              X0: {annotation.x1.toFixed(2)}, Y0: {annotation.y1.toFixed(2)},
+              X1: {annotation.x2.toFixed(2)}, Y1: {annotation.y1.toFixed(2)}
+            </li>
           ))}
         </ul>
       </div>

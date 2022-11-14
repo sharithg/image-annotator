@@ -94,8 +94,6 @@ export const getOffsetToCenterOfLine = (
     yOperator = "+";
   }
 
-  console.log(xOperator, yOperator);
-
   return {
     x1: operators[xOperator](
       coordinates.x1 + offset.dx,

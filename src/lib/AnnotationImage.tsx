@@ -60,8 +60,6 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
     userAnnotationState,
   } = useAnnotations();
 
-  console.log(userAnnotationState);
-
   const userAnnotations = validateAnnotations(
     annotations,
     defaultBoundingBoxStyles,
@@ -165,6 +163,7 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
           offsets,
           styles: defaultLineStyles,
           id: uuidv4(),
+          onAnnotationDraw,
         },
       });
     }
@@ -199,6 +198,7 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
         offsets,
         styles: defaultBoundingBoxStyles,
         id: uuidv4(),
+        onAnnotationDraw,
       },
     });
   };
