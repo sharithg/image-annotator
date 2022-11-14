@@ -25,7 +25,6 @@ import {
   isHoveringOnBoxAnnotation,
   isHoveringOnLineAnnotation,
 } from "./utils/interactions";
-import { v4 as uuidv4 } from "uuid";
 
 type AnnotationImageProps = {
   offsets: Offest;
@@ -84,7 +83,6 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
           context: contextCurr,
           offsets,
           styles: box.styles ?? defaultBoundingBoxStyles,
-          id: box.id,
           onAnnotationDraw,
         },
       });
@@ -97,7 +95,6 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
           context: contextCurr,
           offsets,
           styles: line.styles ?? defaultLineStyles,
-          id: line.id,
           onAnnotationDraw,
         },
       });
@@ -163,7 +160,6 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
           context,
           offsets,
           styles: defaultLineStyles,
-          id: uuidv4(),
         },
       });
     }
@@ -197,7 +193,6 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
         context,
         offsets,
         styles: defaultBoundingBoxStyles,
-        id: uuidv4(),
       },
     });
   };

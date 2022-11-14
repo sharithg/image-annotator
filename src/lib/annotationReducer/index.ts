@@ -10,6 +10,7 @@ import {
   LineCoordinate,
 } from "../types";
 import { AnnotationAction } from "./types";
+import { v4 as uuidv4 } from "uuid";
 
 type BoundingBoxOrLineAnnotation =
   | BoundingBoxAnnotationPropsInternal
@@ -40,7 +41,7 @@ export const annotationImageReducer = (
       const newAnnotationBox = {
         ...(action.payload.coordinates as BoundingBoxCoordinate),
         displayed: true,
-        id: action.payload.id,
+        id: uuidv4(),
         styles: action.payload.styles as BBAnnotationStyles,
       } as BoundingBoxAnnotationPropsInternal;
 
@@ -93,7 +94,7 @@ export const annotationImageReducer = (
       const newAnnotationLine = {
         ...(action.payload.coordinates as LineCoordinate),
         displayed: true,
-        id: action.payload.id,
+        id: uuidv4(),
         styles: action.payload.styles as LineAnnotationStyles,
       } as LineAnnotationPropsInternal;
 

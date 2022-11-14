@@ -15,7 +15,6 @@ type AddBBAnnotation = {
     context: CanvasRenderingContext2D;
     offsets: Offest;
     styles: BBAnnotationStyles;
-    id: string;
     onAnnotationDraw?: OnAnnotationDraw;
   };
 };
@@ -39,7 +38,6 @@ type AddLineAnnotation = {
     context: CanvasRenderingContext2D;
     offsets: Offest;
     styles: LineAnnotationStyles;
-    id: string;
     onAnnotationDraw?: OnAnnotationDraw;
   };
 };
@@ -52,7 +50,6 @@ type UpdateLineAnnotation = {
     offsets: Offest;
     styles: LineAnnotationStyles;
     id: string;
-
     onAnnotationMoving?: OnAnnotationMoving;
   };
 };
