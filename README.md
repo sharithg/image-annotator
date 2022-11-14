@@ -75,9 +75,9 @@ export default App;
 
 ### Demo
 
-[Code](https://github.com/sharithg/image-annotator/blob/main/src/App.tsx)
-
 [Demo](https://image-annotator-demo.netlify.app/)
 ![With X-Ray](https://github.com/sharithg/image-annotator/blob/main/src/assets/demo.png)
+
+[Code](https://github.com/sharithg/image-annotator/blob/main/src/App.tsx)
 
 Known Bugs:
