@@ -1,7 +1,6 @@
 import {
   BBAnnotationStyles,
   BoundingBoxCoordinate,
-  ClientCoordinate,
   Offest,
   XYCoordinate,
 } from "../types";

@@ -7,9 +7,9 @@ export const drawImage = (
 ) => {
   const img = new Image();
   img.onload = function () {
-    var hRatio = canvas.width / img.width;
-    var vRatio = canvas.height / img.height;
-    var ratio = Math.min(hRatio, vRatio);
+    const hRatio = canvas.width / img.width;
+    const vRatio = canvas.height / img.height;
+    const ratio = Math.min(hRatio, vRatio);
 
     const dx = (canvas.width - img.width * ratio) / 2;
     const dy = (canvas.height - img.height * ratio) / 2;

@@ -1,7 +1,6 @@
 import {
   AnnotationsStateInternal,
   ClientCoordinate,
-  LineCoordinate,
   Offest,
   XYCoordinate,
 } from "../types";
@@ -104,8 +103,8 @@ export const isHoveringOnLineAnnotation = (
 ) => {
   const { x: interactionX, y: interactionY } = coordinates;
 
-  for (let i = 0; i < currentAnnotations.lines.length; i++) {
-    const { x1, x2, y1, y2, styles } = currentAnnotations.lines[i];
+  for (const line of currentAnnotations.lines) {
+    const { x1, x2, y1, y2, styles } = line;
 
     if (styles.showHandles) {
       const isInteractingWithFirstHandle =
@@ -125,7 +124,7 @@ export const isHoveringOnLineAnnotation = (
 
       if (isInteractingWithLine) {
         return {
-          annotaion: currentAnnotations.lines[i],
+          annotaion: line,
           handle: isInteractingWithFirstHandle ? "first" : "second",
         };
       }
@@ -143,7 +142,7 @@ export const isHoveringOnLineAnnotation = (
 
     if (isInteractingWithLine) {
       return {
-        annotaion: currentAnnotations.lines[i],
+        annotaion: line,
         handle: "line",
       };
     }

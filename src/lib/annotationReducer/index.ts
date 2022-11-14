@@ -36,7 +36,7 @@ export const annotationImageReducer = (
   action: AnnotationAction
 ): AnnotationsStateInternal => {
   switch (action.type) {
-    case "ADD_BB_ANNOTATION":
+    case "ADD_BB_ANNOTATION": {
       const newAnnotationBox = {
         ...(action.payload.coordinates as BoundingBoxCoordinate),
         displayed: true,
@@ -60,7 +60,8 @@ export const annotationImageReducer = (
       }
 
       return newStateAddBB;
-    case "UPDATE_BB_ANNOTATION":
+    }
+    case "UPDATE_BB_ANNOTATION": {
       const updatedBoundingBoxes = state.boundingBoxes.map((box) => {
         if (box.id === action.payload.id) {
           return {
@@ -87,8 +88,8 @@ export const annotationImageReducer = (
       }
 
       return newStateUpdateBB;
-
-    case "ADD_LINE_ANNOTATION":
+    }
+    case "ADD_LINE_ANNOTATION": {
       const newAnnotationLine = {
         ...(action.payload.coordinates as LineCoordinate),
         displayed: true,
@@ -111,8 +112,8 @@ export const annotationImageReducer = (
       }
 
       return newStateAddLine;
-
-    case "UPDATE_LINE_ANNOTATION":
+    }
+    case "UPDATE_LINE_ANNOTATION": {
       const updatedLines = state.lines.map((line) => {
         if (line.id === action.payload.id) {
           return {
@@ -139,8 +140,9 @@ export const annotationImageReducer = (
       }
 
       return newStateUpdateLine;
-
-    default:
+    }
+    default: {
       return state;
+    }
   }
 };

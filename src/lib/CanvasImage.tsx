@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import AnnotationImage from "./AnnotationImage";
 import { useAnnotations } from "./AnnotationImageContext";
-import { AnyAnnotation } from "./types";
-import { AnnotationsProps, SharedComponentProps } from "./types/props";
+import { SharedComponentProps } from "./types/props";
 import { drawImage } from "./utils/image";
 
 type Props = {

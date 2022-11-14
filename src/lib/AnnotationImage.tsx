@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useRef, useState } from "react";
 import {
   drawBox,
@@ -172,7 +173,7 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
     startCoordinate: ClientCoordinate,
     endCoordinate: ClientCoordinate
   ) => {
-    var rect = canvas?.getBoundingClientRect() as DOMRect;
+    const rect = canvas?.getBoundingClientRect() as DOMRect;
 
     const startUserInteractionCoordinates = getClientCoordinatesOnCanavs(
       startCoordinate,
@@ -202,7 +203,7 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
   };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    var rect = canvas?.getBoundingClientRect() as DOMRect;
+    const rect = canvas?.getBoundingClientRect() as DOMRect;
     const clientCoordintates = getClientCoordinatesOnCanavs(e, offsets, rect);
     const hoveringBoxAnnotation = isHoveringOnBoxAnnotation(
       userAnnotationState,
