@@ -9,12 +9,10 @@ import {
 
 export type LineAnnotationProps = {
   styles?: LineAnnotationStyles;
-  id: string;
 } & LineCoordinate;
 
 export type BoundingBoxAnnotationProps = {
   styles?: BBAnnotationStyles;
-  id: string;
 } & BoundingBoxCoordinate;
 
 export type AnnotationsProps = {

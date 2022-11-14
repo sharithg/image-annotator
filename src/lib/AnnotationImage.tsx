@@ -11,14 +11,15 @@ import {
   CurrentlyInteractingAnnotation,
   LineAnnotationPropsInternal,
   LineAnnotationStyles,
+  LineCoordinate,
   Offest,
 } from "./types";
 import { validateAnnotations } from "./utils/annotations";
 import { drawLine, getLineCoordatesForUserDraw } from "./utils/line";
-import { AnnotationsProps, SharedComponentProps } from "./types/props";
+import { SharedComponentProps } from "./types/props";
 import { useAnnotations } from "./AnnotationImageContext";
-import { drawImage } from "./utils/image";
 import {
+  distanceBetweenPoints,
   getClientCoordinatesOnCanavs,
   isHoveringOnBoxAnnotation,
   isHoveringOnLineAnnotation,
@@ -140,7 +141,7 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
 
   const handleDrawLine = (mouseCoordinates: ClientCoordinate) => {
     if (currentInterationStartMousePosition) {
-      var rect = canvas?.getBoundingClientRect() as DOMRect;
+      const rect = canvas?.getBoundingClientRect() as DOMRect;
 
       const coordintates = getLineCoordatesForUserDraw(
         {
@@ -223,7 +224,11 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
         type: AnnotationTypes.Line,
         annotation: hoveringLine.annotaion,
         annotationSide:
-          hoveringLine.handle === "first" ? "lineStart" : "lineEnd",
+          hoveringLine.handle === "first"
+            ? "lineStart"
+            : hoveringLine.handle === "line"
+            ? "line"
+            : "lineEnd",
       });
     }
     setCurrentInterationStartMousePosition(e);
@@ -263,7 +268,7 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    var rect = canvas?.getBoundingClientRect() as DOMRect;
+    const rect = canvas?.getBoundingClientRect() as DOMRect;
 
     const interactionCoordinates = getClientCoordinatesOnCanavs(
       e,
@@ -276,13 +281,11 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
       currentInteractionAnnotation.type === AnnotationTypes.BoundingBox &&
       currentInterationStartMousePosition
     ) {
+      const currentAnnotation =
+        currentInteractionAnnotation.annotation as BoundingBoxAnnotationPropsInternal;
       const cordinates = getBoxCoordatesForUserUpdate(interactionCoordinates, {
-        height: (
-          currentInteractionAnnotation.annotation as BoundingBoxAnnotationPropsInternal
-        ).height,
-        width: (
-          currentInteractionAnnotation.annotation as BoundingBoxAnnotationPropsInternal
-        ).width,
+        height: currentAnnotation.height,
+        width: currentAnnotation.width,
       });
       dispatchAnnotation({
         type: "UPDATE_BB_ANNOTATION",
@@ -302,26 +305,56 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
       currentInteractionAnnotation.type === AnnotationTypes.Line &&
       currentInterationStartMousePosition
     ) {
-      const currentAnnotation =
-        currentInteractionAnnotation.annotation as LineAnnotationPropsInternal;
+      const annotationSide = currentInteractionAnnotation.annotationSide;
 
-      const isInteractingWithStart =
-        currentInteractionAnnotation.annotationSide === "lineStart";
-
-      const newLineCoordinates = {
-        x1: isInteractingWithStart
-          ? interactionCoordinates.x
-          : currentAnnotation.x1,
-        x2: isInteractingWithStart
-          ? currentAnnotation.x2
-          : interactionCoordinates.x,
-        y1: isInteractingWithStart
-          ? interactionCoordinates.y
-          : currentAnnotation.y1,
-        y2: isInteractingWithStart
-          ? currentAnnotation.y2
-          : interactionCoordinates.y,
+      let newLineCoordinates: LineCoordinate = {
+        x1: 0,
+        y1: 0,
+        x2: 0,
+        y2: 0,
       };
+      if (annotationSide === "lineStart" || annotationSide === "lineEnd") {
+        const currentAnnotation =
+          currentInteractionAnnotation.annotation as LineAnnotationPropsInternal;
+
+        const isInteractingWithStart = annotationSide === "lineStart";
+
+        if (isInteractingWithStart) {
+          newLineCoordinates = {
+            x1: interactionCoordinates.x,
+            y1: interactionCoordinates.y,
+            x2: currentAnnotation.x2,
+            y2: currentAnnotation.y2,
+          };
+        } else {
+          newLineCoordinates = {
+            x1: currentAnnotation.x1,
+            y1: currentAnnotation.y1,
+            x2: interactionCoordinates.x,
+            y2: interactionCoordinates.y,
+          };
+        }
+      } else {
+        const currentAnnotation =
+          currentInteractionAnnotation.annotation as LineAnnotationPropsInternal;
+
+        const lineLength = distanceBetweenPoints(
+          currentAnnotation.x1,
+          currentAnnotation.y1,
+          currentAnnotation.x2,
+          currentAnnotation.y2
+        );
+
+        const dx = interactionCoordinates.x - currentAnnotation.x1;
+        const dy = interactionCoordinates.y - currentAnnotation.y1;
+
+        newLineCoordinates = {
+          x1: currentAnnotation.x1 + dx + lineLength.xDistance / 2,
+          y1: currentAnnotation.y1 + dy - lineLength.yDistance / 2,
+          x2: currentAnnotation.x2 + dx + lineLength.xDistance / 2,
+          y2: currentAnnotation.y2 + dy - lineLength.yDistance / 2,
+        };
+      }
       dispatchAnnotation({
         type: "UPDATE_LINE_ANNOTATION",
         payload: {

@@ -71,7 +71,7 @@ export enum AnnotationTypes {
 
 export type CurrentlyInteractingAnnotation = {
   type: AnnotationTypes;
-  annotationSide: "lineStart" | "lineEnd" | "boundingBox";
+  annotationSide: "lineStart" | "lineEnd" | "line" | "boundingBox";
   annotation: BoundingBoxAnnotationPropsInternal | LineAnnotationPropsInternal;
 };
 

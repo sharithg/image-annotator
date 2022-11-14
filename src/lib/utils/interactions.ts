@@ -1,6 +1,7 @@
 import {
   AnnotationsStateInternal,
   ClientCoordinate,
+  LineCoordinate,
   Offest,
   XYCoordinate,
 } from "../types";
@@ -14,6 +15,44 @@ export const getClientCoordinatesOnCanavs = (
   const x = clientX - offset.dx - mousePointOffset.left;
   const y = clientY - offset.dy - mousePointOffset.top;
   return { x, y };
+};
+
+const distancePointFromLine = (
+  x0: number,
+  y0: number,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+) => {
+  return (
+    Math.abs((x2 - x1) * (y1 - y0) - (x1 - x0) * (y2 - y1)) /
+    Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+  );
+};
+
+function isPointOnLine(
+  px: number,
+  py: number,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  width: number
+) {
+  return distancePointFromLine(px, py, x1, y1, x2, y2) <= width / 2;
+}
+
+export const distanceBetweenPoints = (
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+) => {
+  return {
+    xDistance: Math.abs(x1 - x2),
+    yDistance: Math.abs(y1 - y2),
+  };
 };
 
 export const isHoveringOnBoxAnnotation = (
@@ -90,19 +129,23 @@ export const isHoveringOnLineAnnotation = (
           handle: isInteractingWithFirstHandle ? "first" : "second",
         };
       }
-    } else {
-      const isInteractingWithLine =
-        interactionX >= x1 &&
-        interactionX <= x2 &&
-        interactionY >= y1 &&
-        interactionY <= y2;
+    }
 
-      if (isInteractingWithLine) {
-        return {
-          annotaion: currentAnnotations.lines[i],
-          handle: "first",
-        };
-      }
+    const isInteractingWithLine = isPointOnLine(
+      interactionX,
+      interactionY,
+      x1,
+      y1,
+      x2,
+      y2,
+      styles.strokeWidth
+    );
+
+    if (isInteractingWithLine) {
+      return {
+        annotaion: currentAnnotations.lines[i],
+        handle: "line",
+      };
     }
   }
 };

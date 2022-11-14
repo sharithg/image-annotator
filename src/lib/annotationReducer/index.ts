@@ -11,6 +11,26 @@ import {
 } from "../types";
 import { AnnotationAction } from "./types";
 
+type BoundingBoxOrLineAnnotation =
+  | BoundingBoxAnnotationPropsInternal
+  | LineAnnotationPropsInternal;
+
+const filterDuplicateAnnotations = <T>(
+  annotations: BoundingBoxOrLineAnnotation[]
+) => {
+  const filteredAnnotations: BoundingBoxOrLineAnnotation[] = [];
+
+  annotations.forEach((annotation: BoundingBoxOrLineAnnotation) => {
+    const isDuplicate = filteredAnnotations.some(
+      (filteredAnnotation) => filteredAnnotation.id === annotation.id
+    );
+    if (!isDuplicate) {
+      filteredAnnotations.push(annotation);
+    }
+  });
+  return filteredAnnotations as T[];
+};
+
 export const annotationImageReducer = (
   state: AnnotationsStateInternal,
   action: AnnotationAction
@@ -26,7 +46,11 @@ export const annotationImageReducer = (
 
       const newStateAddBB: AnnotationsStateInternal = {
         ...state,
-        boundingBoxes: [...state.boundingBoxes, newAnnotationBox],
+        boundingBoxes:
+          filterDuplicateAnnotations<BoundingBoxAnnotationPropsInternal>([
+            ...state.boundingBoxes,
+            newAnnotationBox,
+          ]),
       };
 
       if (action.payload.onAnnotationDraw) {
@@ -70,10 +94,14 @@ export const annotationImageReducer = (
         displayed: true,
         id: action.payload.id,
         styles: action.payload.styles as LineAnnotationStyles,
-      };
+      } as LineAnnotationPropsInternal;
+
       const newStateAddLine = {
         ...state,
-        lines: [...state.lines, newAnnotationLine],
+        lines: filterDuplicateAnnotations<LineAnnotationPropsInternal>([
+          ...state.lines,
+          newAnnotationLine,
+        ]),
       };
 
       if (action.payload.onAnnotationDraw) {
