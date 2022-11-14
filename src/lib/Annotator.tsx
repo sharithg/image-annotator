@@ -9,7 +9,7 @@ type Props = {
   width?: number;
 } & SharedComponentProps;
 
-const CanvasImage: React.FC<Props> = ({
+const Annotator: React.FC<Props> = ({
   imageSrc,
   annotations,
   drawMode,
@@ -89,4 +89,4 @@ const CanvasImage: React.FC<Props> = ({
   );
 };
 
-export default CanvasImage;
+export default Annotator;

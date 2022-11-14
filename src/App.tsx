@@ -1,25 +1,25 @@
 import React, { useState } from "react";
 import "./App.css";
-import { CanvasImage } from "./lib";
+import { Annotator } from "./lib";
 import { AnnotationsStateInternal, AnyAnnotation } from "./lib/types";
 import { v4 as uuidv4 } from "uuid";
 
 const bbCoordinates = [
   {
     id: uuidv4(),
-    x: 0,
-    y: 0,
-    width: 100,
-    height: 100,
+    x: 15,
+    y: 15,
+    width: 50,
+    height: 50,
     styles: {
       strokeColor: "red",
-      strokeWidth: 10,
+      strokeWidth: 3,
     },
   },
   {
     id: uuidv4(),
-    x: 200,
-    y: 200,
+    x: 150,
+    y: 150,
     width: 50,
     height: 100,
     styles: {
@@ -38,7 +38,7 @@ const lineCoordinates = [
     y2: 130,
     styles: {
       strokeColor: "purple",
-      strokeWidth: 6,
+      strokeWidth: 4,
       strokeDashArray: [5, 5],
       showHandles: true,
     },
@@ -88,15 +88,17 @@ function App() {
 
   return (
     <div>
-      <CanvasImage
+      <Annotator
         annotations={{
-          boundingBoxes: [bbCoordinates[0]],
-          lines: [lineCoordinates[0]],
+          boundingBoxes: bbCoordinates,
+          lines: lineCoordinates,
         }}
         drawMode={drawType}
         imageSrc="https://medlineplus.gov/images/Xray_share.jpg"
         onAnnotationDraw={handleAnnotationDraw}
         onAnnotationUpdate={handleAnnotationUpdate}
+        height={300}
+        width={500}
       />
       <div className="control-container">
         <div>

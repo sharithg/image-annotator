@@ -1,3 +1,3 @@
-import CanvasImage from "./CanvasImage";
+import Annotator from "./Annotator";
 
-export { CanvasImage };
+export { Annotator };
