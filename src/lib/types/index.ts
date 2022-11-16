@@ -84,3 +84,5 @@ export type OnAnnotationMoving = (
   currentAnnotationState: AnnotationsState,
   updatedAnnotation: AnyAnnotation
 ) => void;
+
+export type DegreeRotations = 0 | 90 | 180 | 270 | 360;

@@ -5,6 +5,7 @@ import {
   AnnotationsState,
   AnyAnnotation,
   BoundingBoxAnnotation,
+  DegreeRotations,
   LineAnnotation,
 } from "./lib/types";
 import { v4 as uuidv4 } from "uuid";
@@ -56,6 +57,7 @@ function App() {
     BoundingBoxAnnotation[]
   >([]);
   const [lineAnnotations, setLineAnnotations] = useState<LineAnnotation[]>([]);
+  const [rotation, setRotation] = useState<DegreeRotations>(0);
 
   const handleAnnotationDraw = (
     currentAnnotationState: AnnotationsState,
@@ -79,6 +81,8 @@ function App() {
     console.log("updatedAnnotation", updatedAnnotation, currentAnnotationState);
   };
 
+  console.log(rotation);
+
   return (
     <div>
       <Annotator
@@ -87,13 +91,17 @@ function App() {
           lines: lineCoordinates,
         }}
         drawMode={drawType}
-        imageSrc="https://medlineplus.gov/images/Xray_share.jpg"
+        imageSrc="https://www.imaginghealthcare.com/wp-content/uploads/2020/06/x-ray.jpg"
         onAnnotationDraw={handleAnnotationDraw}
         onAnnotationUpdate={handleAnnotationUpdate}
         height={300}
         width={500}
+        degreeRotation={rotation}
       />
       <div className="control-container">
+        <button onClick={() => setRotation((rotation + 90) as DegreeRotations)}>
+          Rotate
+        </button>
         <div>
           <h3>Select Annotation Type</h3>
           <select

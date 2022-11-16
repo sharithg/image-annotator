@@ -3,7 +3,7 @@ export const drawImage = (
   canvas: HTMLCanvasElement,
   imageSrc: string,
   imageFetchHeaders: HeadersInit | null,
-  onImageLoad: (dx: number, dy: number) => void
+  onImageLoad: (dx: number, dy: number, img: HTMLImageElement) => void
 ) => {
   const img = new Image();
   img.onload = function () {
@@ -15,7 +15,7 @@ export const drawImage = (
     const dy = (canvas.height - img.height * ratio) / 2;
 
     context.drawImage(img, dx, dy, img.width * ratio, img.height * ratio); // draw the image offset by half
-    onImageLoad(dx, dy);
+    onImageLoad(dx, dy, img);
   };
 
   if (imageFetchHeaders) {

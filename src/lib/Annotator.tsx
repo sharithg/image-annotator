@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import AnnotationImage from "./AnnotationImage";
 import { useAnnotations } from "./AnnotationImageContext";
+import { rotateImage } from "./imageManipulations";
+import { DegreeRotations } from "./types";
 import { SharedComponentProps } from "./types/props";
 import { drawImage } from "./utils/image";
 
 type Props = {
   height?: number;
   width?: number;
+  degreeRotation?: DegreeRotations;
 } & SharedComponentProps;
 
 const Annotator: React.FC<Props> = ({
@@ -15,6 +18,7 @@ const Annotator: React.FC<Props> = ({
   drawMode,
   height,
   width,
+  degreeRotation,
   onAnnotationDraw,
   onAnnotationMoving,
   onAnnotationUpdate,
@@ -25,6 +29,9 @@ const Annotator: React.FC<Props> = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
   const { imageFetchHeaders } = useAnnotations();
+  const [currentImage, setCurrentImage] = useState<HTMLImageElement | null>(
+    null
+  );
 
   const offsets = {
     dx: xOffset,
@@ -50,13 +57,25 @@ const Annotator: React.FC<Props> = ({
       canvas as HTMLCanvasElement,
       imageSrc,
       imageFetchHeaders ?? null,
-      (dx, dy) => {
+      (dx, dy, image) => {
         setImageLoaded(true);
         setXOffset(dx + 5);
         setYOffset(dy + 5);
+        setCurrentImage(image);
       }
     );
   }, [imageLoaded]);
+
+  console.log("degreeRotation", degreeRotation);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (currentImage && canvas && degreeRotation) {
+      const context = canvas.getContext("2d") as CanvasRenderingContext2D;
+
+      rotateImage(degreeRotation, canvas, context, currentImage);
+    }
+  }, [currentImage, imageLoaded, degreeRotation]);
 
   return (
     <div
@@ -66,6 +85,13 @@ const Annotator: React.FC<Props> = ({
         width: canvasHeightAndWidth.width,
       }}
     >
+      <canvas
+        {...canvasHeightAndWidth}
+        style={{
+          position: "absolute",
+          backgroundColor: "black",
+        }}
+      />
       <canvas
         ref={canvasRef}
         {...canvasHeightAndWidth}
