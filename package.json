@@ -8,8 +8,9 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",
-    "build:package": "yarn clean && tsc && cp package.json README.md ./dist/lib",
-    "lint": "yarn eslint . --ext .js,.jsx,.ts,.tsx"
+    "build:package": "pnpm clean && tsc && cp package.json README.md ./dist/lib",
+    "lint": "pnpm eslint . --ext .js,.jsx,.ts,.tsx",
+    "test": "vitest"
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -32,6 +33,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-react": "^7.31.10",
     "typescript": ">=4.4",
-    "vite": "^3.2.3"
+    "vite": "^3.2.3",
+    "vitest": "^0.34.4"
   }
 }

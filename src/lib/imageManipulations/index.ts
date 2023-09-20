@@ -4,7 +4,7 @@ export const rotateImage = (
   degrees: DegreeRotations,
   canvas: HTMLCanvasElement,
   context: CanvasRenderingContext2D,
-  image: CanvasImageSource
+  image: HTMLImageElement
 ) => {
   context.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
   context.save();

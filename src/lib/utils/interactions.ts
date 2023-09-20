@@ -7,7 +7,7 @@ import {
 
 const MIN_INTERACTION_STROKE_WIDTH = 7;
 
-export const getClientCoordinatesOnCanavs = (
+export const getClientCoordinatesOnCanvas = (
   event: ClientCoordinate,
   offset: Offest,
   mousePointOffset: DOMRect
@@ -18,7 +18,12 @@ export const getClientCoordinatesOnCanavs = (
   return { x, y };
 };
 
-const distancePointFromLine = (
+/**
+ * Calculates the perpendicular distance from a point (x0, y0)
+ * to a line segment defined by two points (x1, y1) and (x2, y2).
+ * This distance is calculated using the formula for the distance from a point to a line in a 2D plane.
+ */
+export const distancePointFromLine = (
   x0: number,
   y0: number,
   x1: number,
@@ -41,7 +46,21 @@ function isPointOnLine(
   y2: number,
   width: number
 ) {
-  return distancePointFromLine(px, py, x1, y1, x2, y2) <= width / 2;
+  // calculate the distance from the point to the infinite line
+  const distance = distancePointFromLine(px, py, x1, y1, x2, y2);
+
+  // check if the point is within 'width / 2' distance of the line
+  if (distance > width / 2) {
+    return false;
+  }
+
+  // make sure the point is within the bounding box of the line segment
+  const minX = Math.min(x1, x2);
+  const maxX = Math.max(x1, x2);
+  const minY = Math.min(y1, y2);
+  const maxY = Math.max(y1, y2);
+
+  return px >= minX && px <= maxX && py >= minY && py <= maxY;
 }
 
 export const distanceBetweenPoints = (
