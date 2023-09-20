@@ -19,7 +19,7 @@ import { drawLine, getLineCoordatesForUserDraw } from "./utils/line";
 import { SharedComponentProps } from "./types/props";
 import { useAnnotations } from "./AnnotationImageContext";
 import {
-  getClientCoordinatesOnCanavs,
+  getClientCoordinatesOnCanvas,
   isHoveringOnBoxAnnotation,
   isHoveringOnLineAnnotation,
 } from "./utils/interactions";
@@ -175,12 +175,12 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
   ) => {
     const rect = canvas?.getBoundingClientRect() as DOMRect;
 
-    const startUserInteractionCoordinates = getClientCoordinatesOnCanavs(
+    const startUserInteractionCoordinates = getClientCoordinatesOnCanvas(
       startCoordinate,
       offsets,
       rect
     );
-    const endUserInteractionCoordinates = getClientCoordinatesOnCanavs(
+    const endUserInteractionCoordinates = getClientCoordinatesOnCanvas(
       endCoordinate,
       offsets,
       rect
@@ -205,7 +205,7 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const rect = canvas?.getBoundingClientRect() as DOMRect;
-    const clientCoordintates = getClientCoordinatesOnCanavs(e, offsets, rect);
+    const clientCoordintates = getClientCoordinatesOnCanvas(e, offsets, rect);
     const hoveringBoxAnnotation = isHoveringOnBoxAnnotation(
       userAnnotationState,
       clientCoordintates
@@ -272,7 +272,7 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const rect = canvas?.getBoundingClientRect() as DOMRect;
 
-    const interactionCoordinates = getClientCoordinatesOnCanavs(
+    const interactionCoordinates = getClientCoordinatesOnCanvas(
       e,
       offsets,
       rect
