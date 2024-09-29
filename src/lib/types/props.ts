@@ -25,7 +25,7 @@ export type AnnotationsProps = {
 export type SharedComponentProps = {
   annotations: AnnotationsProps;
   imageSrc: string;
-  drawMode?: string;
+  drawMode?: "line" | "box";
   onAnnotationDraw?: OnAnnotationDraw;
   onAnnotationMoving?: OnAnnotationMoving;
   onAnnotationUpdate?: OnAnnotationMoving;

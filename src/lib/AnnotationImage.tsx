@@ -44,8 +44,8 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
   onAnnotationUpdate,
 }) => {
   const [
-    currentInterationStartMousePosition,
-    setCurrentInterationStartMousePosition,
+    currentInteractionStartMousePosition,
+    setCurrentInteractionStartMousePosition,
   ] = useState<React.MouseEvent<HTMLCanvasElement, MouseEvent> | null>(null);
 
   const [currentInteractionAnnotation, setCurrentInteractionAnnotation] =
@@ -140,13 +140,13 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
   }, [userAnnotationState]);
 
   const handleDrawLine = (mouseCoordinates: ClientCoordinate) => {
-    if (currentInterationStartMousePosition) {
+    if (currentInteractionStartMousePosition) {
       const rect = canvas?.getBoundingClientRect() as DOMRect;
 
-      const coordintates = getLineCoordatesForUserDraw(
+      const coordinates = getLineCoordatesForUserDraw(
         {
-          x: currentInterationStartMousePosition.clientX,
-          y: currentInterationStartMousePosition.clientY,
+          x: currentInteractionStartMousePosition.clientX,
+          y: currentInteractionStartMousePosition.clientY,
         },
         mouseCoordinates,
         offsets,
@@ -158,7 +158,7 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
       dispatchAnnotation({
         type: "ADD_LINE_ANNOTATION",
         payload: {
-          coordinates: coordintates,
+          coordinates,
           context,
           offsets,
           styles: defaultLineStyles,
@@ -233,13 +233,13 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
             : "lineEnd",
       });
     }
-    setCurrentInterationStartMousePosition(e);
+    setCurrentInteractionStartMousePosition(e);
   };
 
   const handleMouseUp = (
     e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
   ) => {
-    if (currentInteractionAnnotation && currentInterationStartMousePosition) {
+    if (currentInteractionAnnotation && currentInteractionStartMousePosition) {
       if (onAnnotationUpdate) {
         onAnnotationUpdate(userAnnotationState, {
           boundingBoxCoordinate:
@@ -252,7 +252,7 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
               : undefined,
         });
       }
-      setCurrentInterationStartMousePosition(null);
+      setCurrentInteractionStartMousePosition(null);
       setCurrentInteractionAnnotation(null);
       return;
     }
@@ -261,11 +261,11 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
       handleDrawLine(e);
     }
     if (drawMode === "box") {
-      if (currentInterationStartMousePosition) {
-        handleDrawBox(currentInterationStartMousePosition, e);
+      if (currentInteractionStartMousePosition) {
+        handleDrawBox(currentInteractionStartMousePosition, e);
       }
     }
-    setCurrentInterationStartMousePosition(null);
+    setCurrentInteractionStartMousePosition(null);
     setCurrentInteractionAnnotation(null);
   };
 
@@ -281,7 +281,7 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
     if (
       currentInteractionAnnotation &&
       currentInteractionAnnotation.type === AnnotationTypes.BoundingBox &&
-      currentInterationStartMousePosition
+      currentInteractionStartMousePosition
     ) {
       const currentAnnotation =
         currentInteractionAnnotation.annotation as BoundingBoxAnnotation;
@@ -305,7 +305,7 @@ const AnnotationImage: React.FC<AnnotationImageProps> = ({
     if (
       currentInteractionAnnotation &&
       currentInteractionAnnotation.type === AnnotationTypes.Line &&
-      currentInterationStartMousePosition
+      currentInteractionStartMousePosition
     ) {
       const newLineCoordinates = calculateLineCoordinatesForMouseMove(
         currentInteractionAnnotation,
