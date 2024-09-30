@@ -26,7 +26,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { calculateLineCoordinatesForMouseMove } from "./utils/mouseEvents";
 
-//asd
+//
 type AnnotationImageProps = {
   offsets: Offest;
   canvasHeightAndWidth: {
