@@ -3,7 +3,7 @@ version: 0.1
 # asd
 jobs:
   build-test-lint:
-    docker: cimg/node:18.20-browsers
+    docker: node
     node: siphon
     steps:
       - checkout
