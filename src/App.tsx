@@ -51,8 +51,12 @@ const lineCoordinates = [
     },
 ]
 
+const DrawTypes = {
+    line: 'line',
+} as const
+
 function App() {
-    const [drawType, setDrawType] = useState('line')
+    const [drawType, setDrawType] = useState(DrawTypes.line)
     const [boundingBoxAnnotations, setBoundingBoxAnnotations] = useState<
         BoundingBoxAnnotation[]
     >([])
@@ -118,7 +122,11 @@ function App() {
                     <select
                         className="draw-type"
                         value={drawType}
-                        onChange={(e) => setDrawType(e.target.value)}
+                        onChange={(e) =>
+                            setDrawType(
+                                e.target.value as keyof typeof DrawTypes
+                            )
+                        }
                     >
                         <option value="box">Box</option>
                         <option value="line">Line</option>
