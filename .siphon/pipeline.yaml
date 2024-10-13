@@ -54,4 +54,5 @@ workflows:
     ci:
         jobs:
             - build-test-lint
-            - test-flow
+            - test-flow:
+                  requires: build-test-lint
