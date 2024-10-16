@@ -1,3 +1,3 @@
-import Annotator from "./Annotator";
+import Annotator from './Annotator'
 
-export { Annotator };
+export { Annotator }

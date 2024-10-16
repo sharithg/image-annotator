@@ -1,39 +1,40 @@
 {
-  "name": "image-annotator",
-  "private": false,
-  "version": "0.0.10",
-  "type": "module",
-  "scripts": {
-    "dev": "vite --port 3000",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "clean": "rm -rf dist",
-    "build:package": "pnpm clean && tsc && cp package.json README.md ./dist/lib",
-    "lint": "pnpm eslint . --ext .js,.jsx,.ts,.tsx",
-    "test": "vitest"
-  },
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "uuid": "^9.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/sharithg/image-annotator"
-  },
-  "devDependencies": {
-    "@types/react": "^18.0.24",
-    "@types/react-dom": "^18.0.8",
-    "@types/uuid": "^8.3.4",
-    "@typescript-eslint/eslint-plugin": "^5.42.1",
-    "@typescript-eslint/parser": "^5.42.1",
-    "@vitejs/plugin-react": "^2.2.0",
-    "eslint": "^8.27.0",
-    "eslint-import-resolver-typescript": "^3.5.2",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-react": "^7.31.10",
-    "typescript": ">=4.4",
-    "vite": "^3.2.3",
-    "vitest": "^0.34.4"
-  }
+    "name": "image-annotator",
+    "private": false,
+    "version": "0.0.10",
+    "scripts": {
+        "dev": "vite --port 3000",
+        "build": "tsc && vite build",
+        "preview": "vite preview",
+        "clean": "rm -rf dist",
+        "build:package": "pnpm clean && tsc && cp package.json README.md ./dist/lib",
+        "lint": "eslint ./src --ext .tsx,.ts",
+        "format": "prettier 'src/**/*.{ts,tsx}' --check",
+        "test": "vitest --run"
+    },
+    "dependencies": {
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "uuid": "^9.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/sharithg/image-annotator"
+    },
+    "devDependencies": {
+        "@types/react": "^18.0.24",
+        "@types/react-dom": "^18.0.8",
+        "@types/uuid": "^8.3.4",
+        "@typescript-eslint/eslint-plugin": "^7.18.0",
+        "@typescript-eslint/parser": "^7.18.0",
+        "@vitejs/plugin-react": "^2.2.0",
+        "eslint": "^8.57.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-prettier": "^5.2.1",
+        "prettier": "^3.3.3",
+        "typescript": ">=4.4",
+        "vite": "^3.2.3",
+        "vite-plugin-eslint": "^1.8.1",
+        "vitest": "^0.34.4"
+    }
 }
