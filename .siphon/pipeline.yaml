@@ -50,9 +50,32 @@ jobs:
                   name: Install pnpm package manager
                   command: ls
 
+    another-flow:
+        docker: node
+        node: siphon
+        steps:
+            - checkout
+            - run:
+                  name: Install pnpm package manager
+                  command: ls
+
+    mycool-flow:
+        docker: node
+        node: siphon
+        steps:
+            - checkout
+            - run:
+                  name: Install pnpm package manager
+                  command: ls
+
 workflows:
     ci:
         jobs:
             - build-test-lint
+            - another-flow
             - test-flow:
-                  requires: build-test-lint
+                  requires:
+                      - build-test-lint
+                      - another-flow
+            - mycool-flow:
+                  requires: test-flow
