@@ -57,7 +57,7 @@ jobs:
             - checkout
             - run:
                   name: Install pnpm package manager
-                  command: ls
+                  command: exit 1
 
     mycool-flow:
         docker: node
