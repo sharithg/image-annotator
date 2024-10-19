@@ -1,56 +1,56 @@
-import React, { useContext, createContext, useReducer } from "react";
-import { annotationImageReducer } from "./annotationReducer";
-import { AnnotationAction } from "./annotationReducer/types";
+import React, { useContext, createContext, useReducer } from 'react'
+import { annotationImageReducer } from './annotationReducer'
+import { AnnotationAction } from './annotationReducer/types'
 import {
-  AnnotationsState,
-  BBAnnotationStyles,
-  LineAnnotationStyles,
-} from "./types";
+    AnnotationsState,
+    BBAnnotationStyles,
+    LineAnnotationStyles,
+} from './types'
 
 type Props = {
-  children: React.ReactNode;
-  defaultBoundingBoxStyles: BBAnnotationStyles;
-  defaultLineStyles: LineAnnotationStyles;
-  imageFetchHeaders?: HeadersInit;
-};
-
-interface Context {
-  dispatchAnnotation: React.Dispatch<AnnotationAction>;
-  imageFetchHeaders: HeadersInit | null;
-  defaultBoundingBoxStyles: BBAnnotationStyles;
-  defaultLineStyles: LineAnnotationStyles;
-  userAnnotationState: AnnotationsState;
+    children: React.ReactNode
+    defaultBoundingBoxStyles: BBAnnotationStyles
+    defaultLineStyles: LineAnnotationStyles
+    imageFetchHeaders?: HeadersInit
 }
 
-const AnnotationsContext = createContext({} as Context);
+interface Context {
+    dispatchAnnotation: React.Dispatch<AnnotationAction>
+    imageFetchHeaders: HeadersInit | null
+    defaultBoundingBoxStyles: BBAnnotationStyles
+    defaultLineStyles: LineAnnotationStyles
+    userAnnotationState: AnnotationsState
+}
+
+const AnnotationsContext = createContext({} as Context)
 
 export const AnnotationsProvider = ({
-  children,
-  defaultBoundingBoxStyles,
-  defaultLineStyles,
-  imageFetchHeaders,
-}: Props) => {
-  const [userAnnotationState, dispatchAnnotation] = useReducer(
-    annotationImageReducer,
-    {
-      boundingBoxes: [],
-      lines: [],
-    }
-  );
-
-  const value: Context = {
-    dispatchAnnotation,
-    imageFetchHeaders: imageFetchHeaders ?? null,
+    children,
     defaultBoundingBoxStyles,
     defaultLineStyles,
-    userAnnotationState,
-  };
+    imageFetchHeaders,
+}: Props) => {
+    const [userAnnotationState, dispatchAnnotation] = useReducer(
+        annotationImageReducer,
+        {
+            boundingBoxes: [],
+            lines: [],
+        }
+    )
 
-  return (
-    <AnnotationsContext.Provider value={value}>
-      {children}
-    </AnnotationsContext.Provider>
-  );
-};
+    const value: Context = {
+        dispatchAnnotation,
+        imageFetchHeaders: imageFetchHeaders ?? null,
+        defaultBoundingBoxStyles,
+        defaultLineStyles,
+        userAnnotationState,
+    }
 
-export const useAnnotations = () => useContext(AnnotationsContext);
+    return (
+        <AnnotationsContext.Provider value={value}>
+            {children}
+        </AnnotationsContext.Provider>
+    )
+}
+
+export const useAnnotations = () => useContext(AnnotationsContext)

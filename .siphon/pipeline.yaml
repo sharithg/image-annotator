@@ -1,0 +1,81 @@
+version: 0.1
+
+# asd
+jobs:
+    build-test-lint:
+        docker: node
+        node: siphon
+        steps:
+            - checkout
+            - restore_cache:
+                  name: Restore pnpm Package Cache
+                  keys:
+                      - pnpm-packages-{{ checksum "pnpm-lock.yaml" }}
+            - run:
+                  name: Install pnpm package manager
+                  command: |
+                      npm i -g pnpm
+                      corepack enable
+                      corepack prepare pnpm@latest-8 --activate
+            - run:
+                  name: Install Dependencies
+                  command: |
+                      pnpm install
+            - save_cache:
+                  name: Save pnpm Package Cache
+                  key: pnpm-packages-{{ checksum "pnpm-lock.yaml" }}
+                  paths:
+                      - node_modules
+                      - /home/circleci/.cache/Cypress
+            - run:
+                  name: Check format
+                  command: pnpm format
+            - run:
+                  name: Run build
+                  command: pnpm build
+            - run:
+                  name: Run lint
+                  command: pnpm lint
+            - run:
+                  name: Run test
+                  command: |
+                      pnpm test
+
+    test-flow:
+        docker: node
+        node: siphon
+        steps:
+            - checkout
+            - run:
+                  name: Install pnpm package manager
+                  command: ls
+
+    another-flow:
+        docker: node
+        node: siphon
+        steps:
+            - checkout
+            - run:
+                  name: Install pnpm package manager
+                  command: exit 1
+
+    mycool-flow:
+        docker: node
+        node: siphon
+        steps:
+            - checkout
+            - run:
+                  name: Install pnpm package manager
+                  command: ls
+
+workflows:
+    ci:
+        jobs:
+            - build-test-lint
+            - another-flow
+            - test-flow:
+                  requires:
+                      - build-test-lint
+                      - another-flow
+            - mycool-flow:
+                  requires: test-flow
